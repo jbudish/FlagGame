@@ -1,0 +1,1120 @@
+{
+  "note": "Current teams and logos fetched from ESPN's public API/CDN for this private family game. Do not hotlink; files live in assets/logos/.",
+  "leagues": {
+    "nfl": [
+      {
+        "id": "ari",
+        "name": "Arizona Cardinals",
+        "file": "assets/logos/nfl/ari.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/ari.png",
+        "variant": "default"
+      },
+      {
+        "id": "atl",
+        "name": "Atlanta Falcons",
+        "file": "assets/logos/nfl/atl.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/atl.png",
+        "variant": "default"
+      },
+      {
+        "id": "bal",
+        "name": "Baltimore Ravens",
+        "file": "assets/logos/nfl/bal.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/bal.png",
+        "variant": "default"
+      },
+      {
+        "id": "buf",
+        "name": "Buffalo Bills",
+        "file": "assets/logos/nfl/buf.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/buf.png",
+        "variant": "default"
+      },
+      {
+        "id": "car",
+        "name": "Carolina Panthers",
+        "file": "assets/logos/nfl/car.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/car.png",
+        "variant": "default"
+      },
+      {
+        "id": "chi",
+        "name": "Chicago Bears",
+        "file": "assets/logos/nfl/chi.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/chi.png",
+        "variant": "default"
+      },
+      {
+        "id": "cin",
+        "name": "Cincinnati Bengals",
+        "file": "assets/logos/nfl/cin.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/cin.png",
+        "variant": "default"
+      },
+      {
+        "id": "cle",
+        "name": "Cleveland Browns",
+        "file": "assets/logos/nfl/cle.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/cle.png",
+        "variant": "default"
+      },
+      {
+        "id": "dal",
+        "name": "Dallas Cowboys",
+        "file": "assets/logos/nfl/dal.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/dal.png",
+        "variant": "default"
+      },
+      {
+        "id": "den",
+        "name": "Denver Broncos",
+        "file": "assets/logos/nfl/den.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/den.png",
+        "variant": "default"
+      },
+      {
+        "id": "det",
+        "name": "Detroit Lions",
+        "file": "assets/logos/nfl/det.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/det.png",
+        "variant": "default"
+      },
+      {
+        "id": "gb",
+        "name": "Green Bay Packers",
+        "file": "assets/logos/nfl/gb.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/gb.png",
+        "variant": "default"
+      },
+      {
+        "id": "hou",
+        "name": "Houston Texans",
+        "file": "assets/logos/nfl/hou.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/hou.png",
+        "variant": "default"
+      },
+      {
+        "id": "ind",
+        "name": "Indianapolis Colts",
+        "file": "assets/logos/nfl/ind.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/ind.png",
+        "variant": "default"
+      },
+      {
+        "id": "jax",
+        "name": "Jacksonville Jaguars",
+        "file": "assets/logos/nfl/jax.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/jax.png",
+        "variant": "default"
+      },
+      {
+        "id": "kc",
+        "name": "Kansas City Chiefs",
+        "file": "assets/logos/nfl/kc.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/kc.png",
+        "variant": "default"
+      },
+      {
+        "id": "lv",
+        "name": "Las Vegas Raiders",
+        "file": "assets/logos/nfl/lv.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/lv.png",
+        "variant": "default"
+      },
+      {
+        "id": "lac",
+        "name": "Los Angeles Chargers",
+        "file": "assets/logos/nfl/lac.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/lac.png",
+        "variant": "default"
+      },
+      {
+        "id": "lar",
+        "name": "Los Angeles Rams",
+        "file": "assets/logos/nfl/lar.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/lar.png",
+        "variant": "default"
+      },
+      {
+        "id": "mia",
+        "name": "Miami Dolphins",
+        "file": "assets/logos/nfl/mia.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/mia.png",
+        "variant": "default"
+      },
+      {
+        "id": "min",
+        "name": "Minnesota Vikings",
+        "file": "assets/logos/nfl/min.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/min.png",
+        "variant": "default"
+      },
+      {
+        "id": "ne",
+        "name": "New England Patriots",
+        "file": "assets/logos/nfl/ne.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/ne.png",
+        "variant": "default"
+      },
+      {
+        "id": "no",
+        "name": "New Orleans Saints",
+        "file": "assets/logos/nfl/no.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/no.png",
+        "variant": "default"
+      },
+      {
+        "id": "nyg",
+        "name": "New York Giants",
+        "file": "assets/logos/nfl/nyg.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/nyg.png",
+        "variant": "default"
+      },
+      {
+        "id": "nyj",
+        "name": "New York Jets",
+        "file": "assets/logos/nfl/nyj.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/nyj.png",
+        "variant": "default"
+      },
+      {
+        "id": "phi",
+        "name": "Philadelphia Eagles",
+        "file": "assets/logos/nfl/phi.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/phi.png",
+        "variant": "default"
+      },
+      {
+        "id": "pit",
+        "name": "Pittsburgh Steelers",
+        "file": "assets/logos/nfl/pit.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/pit.png",
+        "variant": "default"
+      },
+      {
+        "id": "sf",
+        "name": "San Francisco 49ers",
+        "file": "assets/logos/nfl/sf.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/sf.png",
+        "variant": "default",
+        "say": "San Francisco Forty Niners"
+      },
+      {
+        "id": "sea",
+        "name": "Seattle Seahawks",
+        "file": "assets/logos/nfl/sea.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/sea.png",
+        "variant": "default"
+      },
+      {
+        "id": "tb",
+        "name": "Tampa Bay Buccaneers",
+        "file": "assets/logos/nfl/tb.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/tb.png",
+        "variant": "default"
+      },
+      {
+        "id": "ten",
+        "name": "Tennessee Titans",
+        "file": "assets/logos/nfl/ten.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/ten.png",
+        "variant": "default"
+      },
+      {
+        "id": "wsh",
+        "name": "Washington Commanders",
+        "file": "assets/logos/nfl/wsh.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nfl/500/wsh.png",
+        "variant": "default"
+      }
+    ],
+    "nhl": [
+      {
+        "id": "ana",
+        "name": "Anaheim Ducks",
+        "file": "assets/logos/nhl/ana.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/ana.png",
+        "variant": "default"
+      },
+      {
+        "id": "bos",
+        "name": "Boston Bruins",
+        "file": "assets/logos/nhl/bos.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/bos.png",
+        "variant": "default"
+      },
+      {
+        "id": "buf",
+        "name": "Buffalo Sabres",
+        "file": "assets/logos/nhl/buf.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/buf.png",
+        "variant": "default"
+      },
+      {
+        "id": "cgy",
+        "name": "Calgary Flames",
+        "file": "assets/logos/nhl/cgy.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/cgy.png",
+        "variant": "default"
+      },
+      {
+        "id": "car",
+        "name": "Carolina Hurricanes",
+        "file": "assets/logos/nhl/car.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/car.png",
+        "variant": "default"
+      },
+      {
+        "id": "chi",
+        "name": "Chicago Blackhawks",
+        "file": "assets/logos/nhl/chi.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/chi.png",
+        "variant": "default"
+      },
+      {
+        "id": "col",
+        "name": "Colorado Avalanche",
+        "file": "assets/logos/nhl/col.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/col.png",
+        "variant": "default"
+      },
+      {
+        "id": "cbj",
+        "name": "Columbus Blue Jackets",
+        "file": "assets/logos/nhl/cbj.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/cbj.png",
+        "variant": "default"
+      },
+      {
+        "id": "dal",
+        "name": "Dallas Stars",
+        "file": "assets/logos/nhl/dal.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/dal.png",
+        "variant": "default"
+      },
+      {
+        "id": "det",
+        "name": "Detroit Red Wings",
+        "file": "assets/logos/nhl/det.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/det.png",
+        "variant": "default"
+      },
+      {
+        "id": "edm",
+        "name": "Edmonton Oilers",
+        "file": "assets/logos/nhl/edm.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/edm.png",
+        "variant": "default"
+      },
+      {
+        "id": "fla",
+        "name": "Florida Panthers",
+        "file": "assets/logos/nhl/fla.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/fla.png",
+        "variant": "default"
+      },
+      {
+        "id": "la",
+        "name": "Los Angeles Kings",
+        "file": "assets/logos/nhl/la.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/la.png",
+        "variant": "default"
+      },
+      {
+        "id": "min",
+        "name": "Minnesota Wild",
+        "file": "assets/logos/nhl/min.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/min.png",
+        "variant": "default"
+      },
+      {
+        "id": "mtl",
+        "name": "Montreal Canadiens",
+        "file": "assets/logos/nhl/mtl.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/mtl.png",
+        "variant": "default"
+      },
+      {
+        "id": "nsh",
+        "name": "Nashville Predators",
+        "file": "assets/logos/nhl/nsh.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/nsh.png",
+        "variant": "default"
+      },
+      {
+        "id": "nj",
+        "name": "New Jersey Devils",
+        "file": "assets/logos/nhl/nj.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/nj.png",
+        "variant": "default"
+      },
+      {
+        "id": "nyi",
+        "name": "New York Islanders",
+        "file": "assets/logos/nhl/nyi.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/nyi.png",
+        "variant": "default"
+      },
+      {
+        "id": "nyr",
+        "name": "New York Rangers",
+        "file": "assets/logos/nhl/nyr.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/nyr.png",
+        "variant": "default"
+      },
+      {
+        "id": "ott",
+        "name": "Ottawa Senators",
+        "file": "assets/logos/nhl/ott.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/ott.png",
+        "variant": "default"
+      },
+      {
+        "id": "phi",
+        "name": "Philadelphia Flyers",
+        "file": "assets/logos/nhl/phi.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/phi.png",
+        "variant": "default"
+      },
+      {
+        "id": "pit",
+        "name": "Pittsburgh Penguins",
+        "file": "assets/logos/nhl/pit.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/pit.png",
+        "variant": "default"
+      },
+      {
+        "id": "sj",
+        "name": "San Jose Sharks",
+        "file": "assets/logos/nhl/sj.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/sj.png",
+        "variant": "default"
+      },
+      {
+        "id": "sea",
+        "name": "Seattle Kraken",
+        "file": "assets/logos/nhl/sea.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/sea.png",
+        "variant": "default"
+      },
+      {
+        "id": "stl",
+        "name": "St. Louis Blues",
+        "file": "assets/logos/nhl/stl.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/stl.png",
+        "variant": "default",
+        "say": "Saint Louis Blues"
+      },
+      {
+        "id": "tb",
+        "name": "Tampa Bay Lightning",
+        "file": "assets/logos/nhl/tb.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/tb.png",
+        "variant": "default"
+      },
+      {
+        "id": "tor",
+        "name": "Toronto Maple Leafs",
+        "file": "assets/logos/nhl/tor.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/tor.png",
+        "variant": "default"
+      },
+      {
+        "id": "utah",
+        "name": "Utah Mammoth",
+        "file": "assets/logos/nhl/utah.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/utah.png",
+        "variant": "default"
+      },
+      {
+        "id": "van",
+        "name": "Vancouver Canucks",
+        "file": "assets/logos/nhl/van.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/van.png",
+        "variant": "default"
+      },
+      {
+        "id": "vgk",
+        "name": "Vegas Golden Knights",
+        "file": "assets/logos/nhl/vgk.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/vgk.png",
+        "variant": "default"
+      },
+      {
+        "id": "wsh",
+        "name": "Washington Capitals",
+        "file": "assets/logos/nhl/wsh.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/wsh.png",
+        "variant": "default"
+      },
+      {
+        "id": "wpg",
+        "name": "Winnipeg Jets",
+        "file": "assets/logos/nhl/wpg.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nhl/500/wpg.png",
+        "variant": "default"
+      }
+    ],
+    "nba": [
+      {
+        "id": "atl",
+        "name": "Atlanta Hawks",
+        "file": "assets/logos/nba/atl.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/atl.png",
+        "variant": "default"
+      },
+      {
+        "id": "bos",
+        "name": "Boston Celtics",
+        "file": "assets/logos/nba/bos.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/bos.png",
+        "variant": "default"
+      },
+      {
+        "id": "bkn",
+        "name": "Brooklyn Nets",
+        "file": "assets/logos/nba/bkn.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/bkn.png",
+        "variant": "default"
+      },
+      {
+        "id": "cha",
+        "name": "Charlotte Hornets",
+        "file": "assets/logos/nba/cha.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/cha.png",
+        "variant": "default"
+      },
+      {
+        "id": "chi",
+        "name": "Chicago Bulls",
+        "file": "assets/logos/nba/chi.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/chi.png",
+        "variant": "default"
+      },
+      {
+        "id": "cle",
+        "name": "Cleveland Cavaliers",
+        "file": "assets/logos/nba/cle.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/cle.png",
+        "variant": "default"
+      },
+      {
+        "id": "dal",
+        "name": "Dallas Mavericks",
+        "file": "assets/logos/nba/dal.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/dal.png",
+        "variant": "default"
+      },
+      {
+        "id": "den",
+        "name": "Denver Nuggets",
+        "file": "assets/logos/nba/den.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/den.png",
+        "variant": "default"
+      },
+      {
+        "id": "det",
+        "name": "Detroit Pistons",
+        "file": "assets/logos/nba/det.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/det.png",
+        "variant": "default"
+      },
+      {
+        "id": "gs",
+        "name": "Golden State Warriors",
+        "file": "assets/logos/nba/gs.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/gs.png",
+        "variant": "default"
+      },
+      {
+        "id": "hou",
+        "name": "Houston Rockets",
+        "file": "assets/logos/nba/hou.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/hou.png",
+        "variant": "default"
+      },
+      {
+        "id": "ind",
+        "name": "Indiana Pacers",
+        "file": "assets/logos/nba/ind.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/ind.png",
+        "variant": "default"
+      },
+      {
+        "id": "lac",
+        "name": "LA Clippers",
+        "file": "assets/logos/nba/lac.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/lac.png",
+        "variant": "default",
+        "say": "L.A. Clippers"
+      },
+      {
+        "id": "lal",
+        "name": "Los Angeles Lakers",
+        "file": "assets/logos/nba/lal.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/lal.png",
+        "variant": "default"
+      },
+      {
+        "id": "mem",
+        "name": "Memphis Grizzlies",
+        "file": "assets/logos/nba/mem.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/mem.png",
+        "variant": "default"
+      },
+      {
+        "id": "mia",
+        "name": "Miami Heat",
+        "file": "assets/logos/nba/mia.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/mia.png",
+        "variant": "default"
+      },
+      {
+        "id": "mil",
+        "name": "Milwaukee Bucks",
+        "file": "assets/logos/nba/mil.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/mil.png",
+        "variant": "default"
+      },
+      {
+        "id": "min",
+        "name": "Minnesota Timberwolves",
+        "file": "assets/logos/nba/min.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/min.png",
+        "variant": "default"
+      },
+      {
+        "id": "no",
+        "name": "New Orleans Pelicans",
+        "file": "assets/logos/nba/no.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/no.png",
+        "variant": "default"
+      },
+      {
+        "id": "ny",
+        "name": "New York Knicks",
+        "file": "assets/logos/nba/ny.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/ny.png",
+        "variant": "default"
+      },
+      {
+        "id": "okc",
+        "name": "Oklahoma City Thunder",
+        "file": "assets/logos/nba/okc.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/okc.png",
+        "variant": "default"
+      },
+      {
+        "id": "orl",
+        "name": "Orlando Magic",
+        "file": "assets/logos/nba/orl.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/orl.png",
+        "variant": "default"
+      },
+      {
+        "id": "phi",
+        "name": "Philadelphia 76ers",
+        "file": "assets/logos/nba/phi.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/phi.png",
+        "variant": "default",
+        "say": "Philadelphia Seventy Sixers"
+      },
+      {
+        "id": "phx",
+        "name": "Phoenix Suns",
+        "file": "assets/logos/nba/phx.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/phx.png",
+        "variant": "default"
+      },
+      {
+        "id": "por",
+        "name": "Portland Trail Blazers",
+        "file": "assets/logos/nba/por.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/por.png",
+        "variant": "default"
+      },
+      {
+        "id": "sac",
+        "name": "Sacramento Kings",
+        "file": "assets/logos/nba/sac.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/sac.png",
+        "variant": "default"
+      },
+      {
+        "id": "sa",
+        "name": "San Antonio Spurs",
+        "file": "assets/logos/nba/sa.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/sa.png",
+        "variant": "default"
+      },
+      {
+        "id": "tor",
+        "name": "Toronto Raptors",
+        "file": "assets/logos/nba/tor.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/tor.png",
+        "variant": "default"
+      },
+      {
+        "id": "utah",
+        "name": "Utah Jazz",
+        "file": "assets/logos/nba/utah.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/utah.png",
+        "variant": "default"
+      },
+      {
+        "id": "wsh",
+        "name": "Washington Wizards",
+        "file": "assets/logos/nba/wsh.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/nba/500/wsh.png",
+        "variant": "default"
+      }
+    ],
+    "mlb": [
+      {
+        "id": "ari",
+        "name": "Arizona Diamondbacks",
+        "file": "assets/logos/mlb/ari.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/ari.png",
+        "variant": "default"
+      },
+      {
+        "id": "ath",
+        "name": "Athletics",
+        "file": "assets/logos/mlb/ath.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/ath.png",
+        "variant": "default",
+        "say": "The Athletics"
+      },
+      {
+        "id": "atl",
+        "name": "Atlanta Braves",
+        "file": "assets/logos/mlb/atl.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/atl.png",
+        "variant": "default"
+      },
+      {
+        "id": "bal",
+        "name": "Baltimore Orioles",
+        "file": "assets/logos/mlb/bal.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/bal.png",
+        "variant": "default"
+      },
+      {
+        "id": "bos",
+        "name": "Boston Red Sox",
+        "file": "assets/logos/mlb/bos.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/bos.png",
+        "variant": "default"
+      },
+      {
+        "id": "chc",
+        "name": "Chicago Cubs",
+        "file": "assets/logos/mlb/chc.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/chc.png",
+        "variant": "default"
+      },
+      {
+        "id": "chw",
+        "name": "Chicago White Sox",
+        "file": "assets/logos/mlb/chw.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/chw.png",
+        "variant": "default"
+      },
+      {
+        "id": "cin",
+        "name": "Cincinnati Reds",
+        "file": "assets/logos/mlb/cin.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/cin.png",
+        "variant": "default"
+      },
+      {
+        "id": "cle",
+        "name": "Cleveland Guardians",
+        "file": "assets/logos/mlb/cle.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/cle.png",
+        "variant": "default"
+      },
+      {
+        "id": "col",
+        "name": "Colorado Rockies",
+        "file": "assets/logos/mlb/col.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/col.png",
+        "variant": "default"
+      },
+      {
+        "id": "det",
+        "name": "Detroit Tigers",
+        "file": "assets/logos/mlb/det.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/det.png",
+        "variant": "default"
+      },
+      {
+        "id": "hou",
+        "name": "Houston Astros",
+        "file": "assets/logos/mlb/hou.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/hou.png",
+        "variant": "default"
+      },
+      {
+        "id": "kc",
+        "name": "Kansas City Royals",
+        "file": "assets/logos/mlb/kc.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/kc.png",
+        "variant": "default"
+      },
+      {
+        "id": "laa",
+        "name": "Los Angeles Angels",
+        "file": "assets/logos/mlb/laa.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/laa.png",
+        "variant": "default"
+      },
+      {
+        "id": "lad",
+        "name": "Los Angeles Dodgers",
+        "file": "assets/logos/mlb/lad.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/lad.png",
+        "variant": "default"
+      },
+      {
+        "id": "mia",
+        "name": "Miami Marlins",
+        "file": "assets/logos/mlb/mia.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/mia.png",
+        "variant": "default"
+      },
+      {
+        "id": "mil",
+        "name": "Milwaukee Brewers",
+        "file": "assets/logos/mlb/mil.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/mil.png",
+        "variant": "default"
+      },
+      {
+        "id": "min",
+        "name": "Minnesota Twins",
+        "file": "assets/logos/mlb/min.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/min.png",
+        "variant": "default"
+      },
+      {
+        "id": "nym",
+        "name": "New York Mets",
+        "file": "assets/logos/mlb/nym.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/nym.png",
+        "variant": "default"
+      },
+      {
+        "id": "nyy",
+        "name": "New York Yankees",
+        "file": "assets/logos/mlb/nyy.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/nyy.png",
+        "variant": "default"
+      },
+      {
+        "id": "phi",
+        "name": "Philadelphia Phillies",
+        "file": "assets/logos/mlb/phi.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/phi.png",
+        "variant": "default"
+      },
+      {
+        "id": "pit",
+        "name": "Pittsburgh Pirates",
+        "file": "assets/logos/mlb/pit.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/pit.png",
+        "variant": "default"
+      },
+      {
+        "id": "sd",
+        "name": "San Diego Padres",
+        "file": "assets/logos/mlb/sd.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/sd.png",
+        "variant": "default"
+      },
+      {
+        "id": "sf",
+        "name": "San Francisco Giants",
+        "file": "assets/logos/mlb/sf.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/sf.png",
+        "variant": "default"
+      },
+      {
+        "id": "sea",
+        "name": "Seattle Mariners",
+        "file": "assets/logos/mlb/sea.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/sea.png",
+        "variant": "default"
+      },
+      {
+        "id": "stl",
+        "name": "St. Louis Cardinals",
+        "file": "assets/logos/mlb/stl.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/stl.png",
+        "variant": "default",
+        "say": "Saint Louis Cardinals"
+      },
+      {
+        "id": "tb",
+        "name": "Tampa Bay Rays",
+        "file": "assets/logos/mlb/tb.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/tb.png",
+        "variant": "default"
+      },
+      {
+        "id": "tex",
+        "name": "Texas Rangers",
+        "file": "assets/logos/mlb/tex.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/tex.png",
+        "variant": "default"
+      },
+      {
+        "id": "tor",
+        "name": "Toronto Blue Jays",
+        "file": "assets/logos/mlb/tor.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/tor.png",
+        "variant": "default"
+      },
+      {
+        "id": "wsh",
+        "name": "Washington Nationals",
+        "file": "assets/logos/mlb/wsh.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/mlb/500/wsh.png",
+        "variant": "default"
+      }
+    ],
+    "mls": [
+      {
+        "id": "atl",
+        "name": "Atlanta United FC",
+        "file": "assets/logos/mls/atl.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/18418.png",
+        "variant": "default",
+        "say": "Atlanta United F C"
+      },
+      {
+        "id": "atx",
+        "name": "Austin FC",
+        "file": "assets/logos/mls/atx.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/20906.png",
+        "variant": "default",
+        "say": "Austin F C"
+      },
+      {
+        "id": "mtl",
+        "name": "CF Montréal",
+        "file": "assets/logos/mls/mtl.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/9720.png",
+        "variant": "default",
+        "say": "C F Montreal"
+      },
+      {
+        "id": "clt",
+        "name": "Charlotte FC",
+        "file": "assets/logos/mls/clt.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/21300.png",
+        "variant": "default",
+        "say": "Charlotte F C"
+      },
+      {
+        "id": "chi",
+        "name": "Chicago Fire FC",
+        "file": "assets/logos/mls/chi.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/182.png",
+        "variant": "default",
+        "say": "Chicago Fire F C"
+      },
+      {
+        "id": "col",
+        "name": "Colorado Rapids",
+        "file": "assets/logos/mls/col.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/184.png",
+        "variant": "default"
+      },
+      {
+        "id": "clb",
+        "name": "Columbus Crew",
+        "file": "assets/logos/mls/clb.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/183.png",
+        "variant": "default"
+      },
+      {
+        "id": "dc",
+        "name": "D.C. United",
+        "file": "assets/logos/mls/dc.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/193.png",
+        "variant": "default",
+        "say": "D C United"
+      },
+      {
+        "id": "cin",
+        "name": "FC Cincinnati",
+        "file": "assets/logos/mls/cin.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/18267.png",
+        "variant": "default",
+        "say": "F C Cincinnati"
+      },
+      {
+        "id": "dal",
+        "name": "FC Dallas",
+        "file": "assets/logos/mls/dal.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/185.png",
+        "variant": "default",
+        "say": "F C Dallas"
+      },
+      {
+        "id": "hou",
+        "name": "Houston Dynamo FC",
+        "file": "assets/logos/mls/hou.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/6077.png",
+        "variant": "default",
+        "say": "Houston Dynamo F C"
+      },
+      {
+        "id": "mia",
+        "name": "Inter Miami CF",
+        "file": "assets/logos/mls/mia.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/20232.png",
+        "variant": "default",
+        "say": "Inter Miami C F"
+      },
+      {
+        "id": "la",
+        "name": "LA Galaxy",
+        "file": "assets/logos/mls/la.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/187.png",
+        "variant": "default",
+        "say": "L.A. Galaxy"
+      },
+      {
+        "id": "lafc",
+        "name": "Los Angeles FC",
+        "file": "assets/logos/mls/lafc.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/18966.png",
+        "variant": "default",
+        "say": "Los Angeles F C"
+      },
+      {
+        "id": "min",
+        "name": "Minnesota United FC",
+        "file": "assets/logos/mls/min.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/17362.png",
+        "variant": "default",
+        "say": "Minnesota United F C"
+      },
+      {
+        "id": "nsh",
+        "name": "Nashville SC",
+        "file": "assets/logos/mls/nsh.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/18986.png",
+        "variant": "default",
+        "say": "Nashville S C"
+      },
+      {
+        "id": "ne",
+        "name": "New England Revolution",
+        "file": "assets/logos/mls/ne.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/189.png",
+        "variant": "default"
+      },
+      {
+        "id": "nyc",
+        "name": "New York City FC",
+        "file": "assets/logos/mls/nyc.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/17606.png",
+        "variant": "default",
+        "say": "New York City F C"
+      },
+      {
+        "id": "orl",
+        "name": "Orlando City SC",
+        "file": "assets/logos/mls/orl.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/12011.png",
+        "variant": "default",
+        "say": "Orlando City S C"
+      },
+      {
+        "id": "phi",
+        "name": "Philadelphia Union",
+        "file": "assets/logos/mls/phi.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/10739.png",
+        "variant": "default"
+      },
+      {
+        "id": "por",
+        "name": "Portland Timbers",
+        "file": "assets/logos/mls/por.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/9723.png",
+        "variant": "default"
+      },
+      {
+        "id": "rsl",
+        "name": "Real Salt Lake",
+        "file": "assets/logos/mls/rsl.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/4771.png",
+        "variant": "default"
+      },
+      {
+        "id": "rbny",
+        "name": "Red Bull New York",
+        "file": "assets/logos/mls/rbny.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/190.png",
+        "variant": "default"
+      },
+      {
+        "id": "sd",
+        "name": "San Diego FC",
+        "file": "assets/logos/mls/sd.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/22529.png",
+        "variant": "default",
+        "say": "San Diego F C"
+      },
+      {
+        "id": "sj",
+        "name": "San Jose Earthquakes",
+        "file": "assets/logos/mls/sj.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/191.png",
+        "variant": "default"
+      },
+      {
+        "id": "sea",
+        "name": "Seattle Sounders FC",
+        "file": "assets/logos/mls/sea.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/9726.png",
+        "variant": "default",
+        "say": "Seattle Sounders F C"
+      },
+      {
+        "id": "skc",
+        "name": "Sporting Kansas City",
+        "file": "assets/logos/mls/skc.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/186.png",
+        "variant": "default"
+      },
+      {
+        "id": "stl",
+        "name": "St. Louis CITY SC",
+        "file": "assets/logos/mls/stl.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/21812.png",
+        "variant": "default",
+        "say": "Saint Louis City S C"
+      },
+      {
+        "id": "tor",
+        "name": "Toronto FC",
+        "file": "assets/logos/mls/tor.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/7318.png",
+        "variant": "default",
+        "say": "Toronto F C"
+      },
+      {
+        "id": "van",
+        "name": "Vancouver Whitecaps FC",
+        "file": "assets/logos/mls/van.webp",
+        "source": "https://a.espncdn.com/i/teamlogos/soccer/500/9727.png",
+        "variant": "default",
+        "say": "Vancouver Whitecaps F C"
+      }
+    ]
+  }
+}
