@@ -113,7 +113,7 @@ def main():
         assert bad == []
 
         tiles = page.locator(".tile")
-        assert tiles.count() == 6
+        assert tiles.count() == 8
         for gid in ("countries", "nfl", "nhl", "nba", "mlb", "mls"):
             label = page.locator(f'.tile[data-game="{gid}"]').inner_text()
             assert "0" in label, label
@@ -263,6 +263,120 @@ def main():
         box = page.locator(".tile").first.bounding_box()
         print("tile box", box)
         assert box["width"] > 80 and box["height"] > 70
+
+        page.set_viewport_size({"width": 844, "height": 390})
+        page.evaluate(
+            """() => {
+              localStorage.setItem('flaggame.map.us', JSON.stringify(['CA','TX','NY','FL','WA','IL']));
+              localStorage.setItem('flaggame.map.africa', JSON.stringify(['NGA','ZAF','EGY','ETH','KEN']));
+            }"""
+        )
+        page.reload()
+        page.wait_for_timeout(300)
+        assert page.locator('.tile[data-game="us"] .knew').inner_text() == "6/50"
+        assert "Countries" in page.locator('.tile[data-game="countries"]').inner_text()
+        page.screenshot(path=str(SHOTS / "home-with-maps.png"))
+        page.click('.tile[data-game="us"]')
+        page.wait_for_timeout(200)
+        assert page.locator("#usFind").is_visible()
+        page.click("#usFind")
+        page.wait_for_timeout(400)
+        tiny = page.evaluate(
+            """() => ['RI','DE','CT','NJ','MD','MA','VT','NH','HI'].map(id => {
+              const b = document.querySelector('#mapSvg [data-id="'+id+'"] .hit').getBoundingClientRect();
+              return {id, w: Math.round(b.width), h: Math.round(b.height)};
+            })"""
+        )
+        print("tiny phone", tiny)
+        for t in tiny:
+            assert t["w"] >= 32 and t["h"] >= 32, t
+        assert page.locator("#mapSvg .place.filled").count() == 6
+        assert page.locator("#mapAsk").inner_text().strip() != ""
+        page.screenshot(path=str(SHOTS / "us-find.png"))
+        # A correct tap fills the prompted state. A wrong tap does not.
+        before = page.evaluate("() => FlagGame.mapFilled('us').size")
+        spot = page.evaluate(
+            """() => {
+              const place = FlagGame.mapCur;
+              const svg = document.getElementById('mapSvg');
+              const pt = svg.createSVGPoint();
+              pt.x = place.cx; pt.y = place.cy;
+              const s = pt.matrixTransform(svg.getScreenCTM());
+              return {x: s.x, y: s.y, id: place.id, name: place.name};
+            }"""
+        )
+        print("tap", spot)
+        page.mouse.click(spot["x"], spot["y"])
+        page.wait_for_timeout(900)
+        after = page.evaluate("() => FlagGame.mapFilled('us').size")
+        print("filled", before, "->", after)
+        assert after == before + 1, (before, after, spot)
+        # Wrong tap flashes the answer and leaves it unfilled.
+        wrong_name = page.locator("#mapAsk").inner_text().strip()
+        page.evaluate(
+            """() => {
+              const cur = FlagGame.mapCur.id;
+              const other = FlagGame.MAPS.us.places.find(p => p.id !== cur && !FlagGame.mapFilled('us').has(p.id));
+              const svg = document.getElementById('mapSvg');
+              const pt = svg.createSVGPoint();
+              pt.x = other.cx; pt.y = other.cy;
+              const s = pt.matrixTransform(svg.getScreenCTM());
+              window.__wrong = {x: s.x, y: s.y, id: other.id};
+            }"""
+        )
+        wrong = page.evaluate("() => window.__wrong")
+        page.mouse.click(wrong["x"], wrong["y"])
+        page.wait_for_timeout(400)
+        assert page.locator(f'#mapSvg [data-id="{page.evaluate("() => FlagGame.mapCur.id")}"]').count() == 1
+        flashed = page.evaluate("() => !!document.querySelector('#mapSvg .place.flash')")
+        print("flash", flashed, "prompt was", wrong_name)
+        assert flashed
+        page.wait_for_timeout(1400)
+        still = page.evaluate("() => FlagGame.mapFilled('us').size")
+        assert still == after
+        # Back home, then world maps.
+        page.click("#mapClose")
+        page.wait_for_timeout(150)
+        page.click("#usClose")
+        page.wait_for_timeout(150)
+        page.click('.tile[data-game="world"]')
+        page.wait_for_timeout(200)
+        assert page.locator(".cont").count() == 6
+        africa = page.locator('.cont[data-cont="africa"]')
+        assert "5/51" in africa.inner_text()
+        page.screenshot(path=str(SHOTS / "world-continents.png"))
+        africa.click()
+        page.wait_for_timeout(150)
+        page.click("#worldFind")
+        page.wait_for_timeout(400)
+        assert page.locator("#mapSvg .place.filled").count() == 5
+        assert page.locator("#mapAsk").inner_text().strip() != ""
+        page.screenshot(path=str(SHOTS / "africa-find.png"))
+        page.click("#mapClose")
+        page.wait_for_timeout(100)
+        page.once("dialog", lambda d: d.accept())
+        page.click("#worldReset")
+        page.wait_for_timeout(150)
+        assert page.locator("#worldProgress").inner_text().startswith("0 of ")
+        # Tablet: tiny states stay tappable.
+        page.click("#worldModeClose")
+        page.click("#worldClose")
+        page.set_viewport_size({"width": 1180, "height": 820})
+        page.wait_for_timeout(200)
+        page.click('.tile[data-game="us"]')
+        page.click("#usFind")
+        page.wait_for_timeout(300)
+        tiny_tab = page.evaluate(
+            """() => ['RI','DE','HI'].map(id => {
+              const b = document.querySelector('#mapSvg [data-id="'+id+'"] .hit').getBoundingClientRect();
+              return {id, w: Math.round(b.width), h: Math.round(b.height)};
+            })"""
+        )
+        print("tiny tablet", tiny_tab)
+        for t in tiny_tab:
+            assert t["w"] >= 32 and t["h"] >= 32, t
+        page.screenshot(path=str(SHOTS / "us-find-tablet.png"))
+        assert page.locator("#rotate").is_visible() is False
 
         print("external", reqs)
         print("errors", errors)

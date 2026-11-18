@@ -24,15 +24,16 @@ button:active{transform:scale(.94)}
 #home{flex-direction:column;align-items:center;gap:1.2vh;
   background:linear-gradient(165deg,#42a5f5,#1565c0);
   padding:max(8px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
-#top{display:flex;align-items:center;justify-content:space-between;width:min(100%,980px);gap:12px;flex:none}
+#top{display:flex;align-items:center;justify-content:space-between;width:min(100%,1100px);gap:12px;flex:none}
 #home h1{font-size:clamp(22px,6.4vh,40px);text-shadow:0 3px 0 rgba(0,0,0,.2);line-height:1;letter-spacing:.3px}
 #reset{background:rgba(0,0,0,.22);font-size:13px;font-weight:700;padding:8px 12px;border-radius:999px;opacity:.85;flex:none}
-#tiles{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:1fr 1fr;gap:clamp(6px,1.6vh,12px);width:min(100%,980px);flex:1;min-height:0}
+#tiles{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:1fr 1fr;gap:clamp(6px,1.6vh,12px);width:min(100%,1100px);flex:1;min-height:0}
 .tile{border-radius:22px;box-shadow:0 7px 0 var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:4px 6px;min-width:0;min-height:0}
 .tile:active{transform:translateY(5px);box-shadow:0 2px 0 var(--shadow)}
 .tile .emoji{font-family:"Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",emoji,sans-serif;font-size:clamp(26px,7.2vh,52px);line-height:1}
 .tile .title{font-size:clamp(15px,3.5vh,26px);font-weight:800;letter-spacing:.4px;line-height:1.05}
 .tile .knew{font-size:clamp(28px,8vh,58px);font-weight:800;line-height:.85;color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.28)}
+.tile .knew.frac{font-size:clamp(18px,5.2vh,40px);letter-spacing:-.5px}
 .tile .sub{font-size:clamp(11px,2.5vh,16px);font-weight:700;opacity:.96;line-height:1.1}
 /* GAME */
 #game{background:#263238;
@@ -43,7 +44,7 @@ button:active{transform:scale(.94)}
 #game.light #flag{filter:drop-shadow(0 8px 16px rgba(0,0,0,.18))}
 #flag.pop{animation:pop .35s ease-out}
 @keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
-#close{position:absolute;top:8px;left:8px;width:56px;height:56px;border-radius:50%;background:rgba(0,0,0,.55);font-size:30px;font-weight:bold;line-height:56px;z-index:5;border:3px solid rgba(255,255,255,.85)}
+.xbtn{position:absolute;top:8px;left:8px;width:56px;height:56px;border-radius:50%;background:rgba(0,0,0,.55);font-size:30px;font-weight:bold;line-height:56px;z-index:6;border:3px solid rgba(255,255,255,.85)}
 #name{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:rgba(255,255,255,.97);color:#0d47a1;font-weight:bold;
   font-size:min(8vh,5.2vw);padding:.55vh 3vw;border-radius:20px;border:3px solid #1565c0;box-shadow:0 4px 14px rgba(0,0,0,.28);white-space:nowrap;max-width:96%;overflow:hidden;text-align:center;display:none;z-index:4}
 #name.show{display:block;animation:pop .3s ease-out}
@@ -66,6 +67,54 @@ button:active{transform:scale(.94)}
 #rotate p{font-size:30px;font-weight:bold;line-height:1.3}
 #rotate small{font-size:18px;opacity:.85}
 @media (orientation:portrait){#rotate{display:flex}}
+/* MAP PICKERS */
+.picker{flex-direction:column;align-items:center;justify-content:center;gap:2vh;
+  background:linear-gradient(165deg,#29b6f6,#1565c0);
+  padding:max(10px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
+.picker h2{font-size:clamp(26px,8vh,46px);text-shadow:0 3px 0 rgba(0,0,0,.22);line-height:1}
+.picker .progress{font-size:clamp(18px,5vh,32px);font-weight:800}
+.mode-row{display:flex;gap:3vw;width:min(100%,820px)}
+.bigbtn{flex:1;border-radius:28px;min-height:22vh;padding:2vh 2vw;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6vh;box-shadow:0 8px 0 rgba(0,0,0,.25)}
+.bigbtn b{font-size:clamp(26px,8vh,44px);line-height:1}
+.bigbtn small{font-size:clamp(13px,3.2vh,20px);font-weight:700;opacity:.95}
+.bigbtn.name{background:#43a047;box-shadow:0 8px 0 #2e7d32}
+.bigbtn.find{background:#fb8c00;box-shadow:0 8px 0 #ef6c00}
+.bigbtn:active{transform:translateY(5px)}
+.newmap{background:rgba(0,0,0,.22);font-size:16px;font-weight:800;padding:10px 18px;border-radius:999px}
+#contGrid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:1fr 1fr;gap:clamp(8px,1.6vh,14px);width:min(100%,980px);height:min(64vh,340px)}
+.cont{border-radius:22px;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 6px 0 rgba(0,0,0,.22);color:#fff}
+.cont .ct{font-size:clamp(16px,4.4vh,30px)}
+.cont .cp{font-size:clamp(20px,5.4vh,36px);line-height:1}
+/* MAP PLAY */
+#mapGame{background:#4fc3f7;flex-direction:row;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+#mapMain{position:relative;flex:1;min-width:0;display:flex;flex-direction:column}
+#mapAsk{display:none;flex:none;align-self:center;margin:8px 8px 0 70px;background:#fff;color:#0d47a1;font-weight:800;
+  font-size:clamp(22px,7vh,40px);line-height:1.05;padding:6px 18px;border-radius:18px;border:3px solid #1565c0;max-width:92%;text-align:center}
+#mapGame.findmode #mapAsk{display:block}
+#mapStage{flex:1;min-height:0;position:relative}
+#mapSvg{width:100%;height:100%;display:block;touch-action:manipulation}
+#mapSvg .place path{fill:#f7fbff;stroke:#455a64;stroke-width:1.4;vector-effect:non-scaling-stroke}
+#mapSvg .place.filled path{fill:var(--c);stroke:#fff;stroke-width:1.6}
+#mapSvg .place.hot path{fill:#fff8e1;stroke:#ff6f00;stroke-width:4;animation:mapPulse .9s ease-in-out infinite}
+#mapSvg .place.flash path{fill:#ffee58;stroke:#e65100;stroke-width:5}
+#mapSvg .hit{fill:transparent;stroke:none;pointer-events:all}
+#mapSvg .marker{fill:#0d47a1;stroke:#fff;stroke-width:2;pointer-events:none}
+@keyframes mapPulse{0%,100%{stroke:#ff6f00}50%{stroke:#ffeb3b}}
+#mapName{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:#fff;color:#0d47a1;font-weight:800;
+  font-size:min(8vh,5.2vw);padding:.5vh 3vw;border-radius:18px;border:3px solid #1565c0;display:none;z-index:4;max-width:94%;white-space:nowrap}
+#mapName.show{display:block}
+#mapBanner{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);background:#fff;color:#2e7d32;font-weight:800;
+  font-size:clamp(28px,8vh,52px);padding:12px 22px;border-radius:24px;border:4px solid #43a047;box-shadow:0 8px 0 #2e7d32;display:none;z-index:7}
+#mapBanner.on{display:block}
+#mapSide{display:flex;flex-direction:column;justify-content:space-between;gap:10px;padding:10px 10px 10px 0;width:min(30vh,24vw);min-width:96px}
+#mapGame.findmode #mapSide{display:none}
+#mapSide button{flex:1;border-radius:22px;font-size:min(14vh,11vw);font-weight:bold;display:flex;align-items:center;justify-content:center;line-height:1}
+#mapSide button svg{width:60%;height:60%}
+#mapYes{background:#43a047;box-shadow:inset 0 -6px 0 #2e7d32}
+#mapAskBtn{background:#ffb300;box-shadow:inset 0 -6px 0 #ff8f00}
+#mapNo{background:#e53935;box-shadow:inset 0 -6px 0 #b71c1c}
+.busy #mapSide button,.busy #mapSvg{pointer-events:none}
 </style>
 </head>
 <body>
@@ -78,7 +127,7 @@ button:active{transform:scale(.94)}
 </div>
 <div id="game" class="screen">
   <div id="flagArea">
-    <button id="close" aria-label="Back to home">✕</button>
+    <button id="close" class="xbtn" aria-label="Back to home">✕</button>
     <img id="flag" alt="" draggable="false">
     <div id="name"></div>
   </div>
@@ -88,18 +137,68 @@ button:active{transform:scale(.94)}
     <button id="no" aria-label="Didn't know it"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/></svg></button>
   </div>
 </div>
+<div id="usMode" class="screen picker">
+  <button id="usClose" class="xbtn" aria-label="Back to home">✕</button>
+  <h2>US States</h2>
+  <p class="progress" id="usProgress">0/50</p>
+  <div class="mode-row">
+    <button id="usName" class="bigbtn name"><b>Name it</b><small>We point. Did you know it?</small></button>
+    <button id="usFind" class="bigbtn find"><b>Find it</b><small>We say it. You tap it.</small></button>
+  </div>
+  <button id="usReset" class="newmap">Start a new map</button>
+</div>
+<div id="worldPick" class="screen picker">
+  <button id="worldClose" class="xbtn" aria-label="Back to home">✕</button>
+  <h2>Pick a continent</h2>
+  <div id="contGrid"></div>
+</div>
+<div id="worldMode" class="screen picker">
+  <button id="worldModeClose" class="xbtn" aria-label="Back">✕</button>
+  <h2 id="worldModeTitle">Africa</h2>
+  <p class="progress" id="worldProgress">0/50</p>
+  <div class="mode-row">
+    <button id="worldName" class="bigbtn name"><b>Name it</b><small>We point. Did you know it?</small></button>
+    <button id="worldFind" class="bigbtn find"><b>Find it</b><small>We say it. You tap it.</small></button>
+  </div>
+  <button id="worldReset" class="newmap">Start a new map</button>
+</div>
+<div id="mapGame" class="screen">
+  <div id="mapMain">
+    <button id="mapClose" class="xbtn" aria-label="Back">✕</button>
+    <div id="mapAsk"></div>
+    <div id="mapStage"><svg id="mapSvg"></svg></div>
+    <div id="mapName"></div>
+    <div id="mapBanner">You did it!</div>
+  </div>
+  <div id="mapSide">
+    <button id="mapYes" aria-label="I knew it"><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <button id="mapAskBtn" aria-label="Say the name">?</button>
+    <button id="mapNo" aria-label="Didn't know it"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/></svg></button>
+  </div>
+</div>
 <div id="bigstar">⭐</div>
 <div id="rotate"><div class="phone"></div><p>Turn your phone sideways!</p><small>Every game works best this way ↻</small></div>
 <script>
 const DATA=/*DATA*/;
+const MAPS=/*MAPS*/;
 const META=[
   {id:'countries',title:'Countries',icon:'🌍',bg:'linear-gradient(165deg,#7e57c2,#5e35b1)',shadow:'#4527a0',light:false},
   {id:'nfl',title:'NFL',icon:'🏈',bg:'linear-gradient(165deg,#8d6e63,#5d4037)',shadow:'#3e2723',light:true},
   {id:'nhl',title:'NHL',icon:'🏒',bg:'linear-gradient(165deg,#26c6da,#00838f)',shadow:'#006064',light:true},
   {id:'nba',title:'NBA',icon:'🏀',bg:'linear-gradient(165deg,#ffa726,#ef6c00)',shadow:'#e65100',light:true},
   {id:'mlb',title:'MLB',icon:'⚾',bg:'linear-gradient(165deg,#ef5350,#c62828)',shadow:'#b71c1c',light:true},
-  {id:'mls',title:'MLS',icon:'⚽',bg:'linear-gradient(165deg,#66bb6a,#2e7d32)',shadow:'#1b5e20',light:true}
+  {id:'mls',title:'MLS',icon:'⚽',bg:'linear-gradient(165deg,#66bb6a,#2e7d32)',shadow:'#1b5e20',light:true},
+  {id:'us',title:'US States',icon:'🇺🇸',bg:'linear-gradient(165deg,#5c6bc0,#283593)',shadow:'#1a237e',kind:'us'},
+  {id:'world',title:'World Map',icon:'🗺️',bg:'linear-gradient(165deg,#26a69a,#00695c)',shadow:'#004d40',kind:'world'}
 ];
+const CONT_BG={
+  africa:'linear-gradient(165deg,#ef6c00,#e65100)',
+  asia:'linear-gradient(165deg,#8e24aa,#6a1b9a)',
+  europe:'linear-gradient(165deg,#3949ab,#1a237e)',
+  'north-america':'linear-gradient(165deg,#00897b,#00695c)',
+  'south-america':'linear-gradient(165deg,#7cb342,#558b2f)',
+  oceania:'linear-gradient(165deg,#039be5,#01579b)'
+};
 const $=id=>document.getElementById(id);
 const store={get(k,d){try{const v=localStorage.getItem('flaggame.'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
   set(k,v){try{localStorage.setItem('flaggame.'+k,JSON.stringify(v))}catch(e){}}};
@@ -122,13 +221,40 @@ function loadState(id){
   else s={score,played,deck:s.deck,pos};
   state[id]=s;save(id);
 }
+function mapFilled(key){
+  const group=mapGroupById(key);
+  const known=new Set(group.places.map(p=>p.id));
+  const v=store.get('map.'+key,[]);
+  return new Set((Array.isArray(v)?v:[]).filter(id=>known.has(id)));
+}
+function saveFilled(key,set){store.set('map.'+key,[...set])}
+function mapGroupById(key){
+  if(key==='us')return MAPS.us;
+  return MAPS.continents.find(c=>c.id===key);
+}
+function worldTotals(){
+  let filled=0,total=0;
+  for(const c of MAPS.continents){total+=c.places.length;filled+=mapFilled(c.id).size}
+  return {filled,total};
+}
 function renderHome(){
   for(const m of META){
-    const s=state[m.id],el=document.querySelector('.tile[data-game="'+m.id+'"]');
+    const el=document.querySelector('.tile[data-game="'+m.id+'"]');
     if(!el)continue;
-    el.querySelector('.knew').textContent=s.score;
-    el.querySelector('.played').textContent=s.played;
-    el.setAttribute('aria-label',m.title+', '+s.score+' knew, '+s.played+' played');
+    if(m.kind==='us'){
+      const n=mapFilled('us').size,t=MAPS.us.places.length;
+      el.querySelector('.knew').textContent=n+'/'+t;
+      el.setAttribute('aria-label','US States, '+n+' of '+t+' filled');
+    }else if(m.kind==='world'){
+      const w=worldTotals();
+      el.querySelector('.knew').textContent=w.filled+'/'+w.total;
+      el.setAttribute('aria-label','World Map, '+w.filled+' of '+w.total+' filled');
+    }else{
+      const s=state[m.id];
+      el.querySelector('.knew').textContent=s.score;
+      el.querySelector('.played').textContent=s.played;
+      el.setAttribute('aria-label',m.title+', '+s.score+' knew, '+s.played+' played');
+    }
   }
 }
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id))}
@@ -175,25 +301,202 @@ const tiles=$('tiles');
 for(const m of META){
   const b=document.createElement('button');
   b.className='tile';b.dataset.game=m.id;b.style.background=m.bg;b.style.setProperty('--shadow',m.shadow);
-  b.innerHTML='<span class="emoji" aria-hidden="true">'+m.icon+'</span><span class="title">'+m.title+'</span><span class="knew">0</span><span class="sub">⭐ knew · <b class="played">0</b> played</span>';
-  tap(b,()=>startGame(m.id));
+  if(m.kind){
+    b.innerHTML='<span class="emoji" aria-hidden="true">'+m.icon+'</span><span class="title">'+m.title+'</span><span class="knew frac">0/0</span><span class="sub">filled in</span>';
+    tap(b,()=>m.kind==='us'?openUs():openWorld());
+  }else{
+    b.innerHTML='<span class="emoji" aria-hidden="true">'+m.icon+'</span><span class="title">'+m.title+'</span><span class="knew">0</span><span class="sub">⭐ knew · <b class="played">0</b> played</span>';
+    tap(b,()=>startGame(m.id));
+  }
   tiles.appendChild(b);
 }
-for(const m of META)loadState(m.id);
+for(const m of META)if(!m.kind)loadState(m.id);
 tap($('close'),goHome);
 tap($('ask'),()=>{if(!cur)return;const n=$('name');n.textContent=cur.name;n.classList.add('show');fitName();say(cur.say||cur.name)});
 tap($('yes'),()=>{if(busy||!cur)return;const s=state[gameId];s.score++;s.played++;save(gameId);chime();burst();lock(800);setTimeout(nextItem,650)});
 tap($('no'),()=>{if(busy||!cur)return;state[gameId].played++;save(gameId);lock(350);nextItem()});
 tap($('reset'),()=>{
   if(!confirm('Reset every score back to 0?\n\n(Grown-ups only!)'))return;
-  for(const m of META){state[m.id]={score:0,played:0,deck:shuffle(DATA[m.id].length),pos:0};save(m.id)}
+  for(const m of META){if(m.kind)continue;state[m.id]={score:0,played:0,deck:shuffle(DATA[m.id].length),pos:0};save(m.id)}
   try{['score','played','deck','pos'].forEach(k=>localStorage.removeItem('flaggame.'+k))}catch(e){}
   renderHome();
 });
 document.addEventListener('gesturestart',e=>e.preventDefault());
 document.addEventListener('dblclick',e=>e.preventDefault());
+const SVGNS='http://www.w3.org/2000/svg';
+let mapKey=null,mapMode=null,mapCur=null,mapDeck=[],mapPlaces=[];
+function shuffleIds(ids){const a=ids.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function usProgressText(){const n=mapFilled('us').size,t=MAPS.us.places.length;$('usProgress').textContent=n+' of '+t+' filled'}
+function worldProgressText(){
+  const g=mapGroupById(worldCont);
+  const n=mapFilled(worldCont).size;
+  $('worldModeTitle').textContent=g.title;
+  $('worldProgress').textContent=n+' of '+g.places.length+' filled';
+}
+let worldCont=null;
+function openUs(){usProgressText();show('usMode')}
+function openWorld(){renderContinents();show('worldPick')}
+function renderContinents(){
+  const grid=$('contGrid');grid.innerHTML='';
+  for(const c of MAPS.continents){
+    const n=mapFilled(c.id).size;
+    const b=document.createElement('button');
+    b.className='cont';b.style.background=CONT_BG[c.id];b.dataset.cont=c.id;
+    b.innerHTML='<span class="ct">'+c.title+'</span><span class="cp">'+n+'/'+c.places.length+'</span>';
+    tap(b,()=>{worldCont=c.id;worldProgressText();show('worldMode')});
+    grid.appendChild(b);
+  }
+}
+function resetMap(key){
+  if(!confirm('Start a new map?\n\n(Grown-ups only!)'))return;
+  saveFilled(key,new Set());
+  if(key==='us')usProgressText();else{worldProgressText();renderContinents()}
+  renderHome();
+}
+function drawMap(group,markers){
+  const svg=$('mapSvg');
+  svg.setAttribute('viewBox',group.vb);
+  svg.replaceChildren();
+  mapPlaces=group.places;
+  for(const p of group.places){
+    const g=document.createElementNS(SVGNS,'g');
+    g.setAttribute('class','place');g.dataset.id=p.id;g.style.setProperty('--c',p.fill);
+    const path=document.createElementNS(SVGNS,'path');path.setAttribute('d',p.d);path.setAttribute('fill-rule','evenodd');g.appendChild(path);
+    if(p.hit){
+      const hit=document.createElementNS(SVGNS,'circle');
+      hit.setAttribute('class','hit');hit.setAttribute('cx',p.hit[0]);hit.setAttribute('cy',p.hit[1]);hit.setAttribute('r',p.hit[2]);
+      g.appendChild(hit);
+      if(markers){
+        const dot=document.createElementNS(SVGNS,'circle');
+        dot.setAttribute('class','marker');dot.setAttribute('cx',p.cx);dot.setAttribute('cy',p.cy);dot.setAttribute('r','8');
+        g.appendChild(dot);
+      }
+    }
+    svg.appendChild(g);
+  }
+}
+function paintMap(){
+  const filled=mapFilled(mapKey);
+  for(const g of $('mapSvg').querySelectorAll('.place')){
+    g.classList.toggle('filled',filled.has(g.dataset.id));
+    g.classList.toggle('hot',mapMode==='name'&&mapCur&&g.dataset.id===mapCur.id);
+    g.classList.remove('flash');
+  }
+}
+function fitMapText(el){
+  el.style.fontSize='';
+  const max=el.parentElement.clientWidth*0.9;
+  let size=parseFloat(getComputedStyle(el).fontSize);
+  while(el.scrollWidth>max&&size>16){size-=1;el.style.fontSize=size+'px'}
+}
+function mapSpeakName(){if(!mapCur)return;say(mapCur.say||mapCur.name)}
+function showMapRound(){
+  $('mapBanner').classList.remove('on');
+  paintMap();
+  const ask=$('mapAsk'),label=$('mapName');
+  label.classList.remove('show');label.style.fontSize='';
+  if(!mapCur){ask.textContent='';return}
+  if(mapMode==='find'){ask.textContent=mapCur.name;fitMapText(ask);mapSpeakName()}
+  else ask.textContent='';
+}
+function mapCelebrate(){
+  paintMap();
+  $('mapBanner').classList.add('on');
+  burst();setTimeout(burst,220);setTimeout(burst,440);
+  renderHome();
+}
+function mapAdvance(){
+  if(!mapDeck.length){mapCur=null;mapCelebrate();return}
+  mapCur=mapPlaces.find(p=>p.id===mapDeck[0]);
+  showMapRound();
+}
+function mapCorrect(){
+  if(busy||!mapCur)return;
+  const id=mapCur.id;
+  mapDeck.shift();
+  const filled=mapFilled(mapKey);filled.add(id);saveFilled(mapKey,filled);
+  chime();burst();renderHome();
+  if(!mapDeck.length){lock(900);paintMap();setTimeout(mapCelebrate,500)}
+  else{lock(700);setTimeout(mapAdvance,620)}
+}
+function mapMiss(){
+  if(!mapCur)return;
+  const id=mapDeck.shift();
+  mapDeck.push(id);
+  lock(300);
+  setTimeout(mapAdvance,280);
+}
+function mapWrongFind(){
+  if(busy||!mapCur)return;
+  lock(1700);
+  const g=$('mapSvg').querySelector('.place[data-id="'+mapCur.id+'"]');
+  if(g)g.classList.add('flash');
+  const id=mapDeck.shift();mapDeck.push(id);
+  setTimeout(()=>{if(g)g.classList.remove('flash');mapAdvance()},1500);
+}
+function pickPlace(e){
+  const svg=$('mapSvg'),pt=svg.createSVGPoint();
+  pt.x=e.clientX;pt.y=e.clientY;
+  const ctm=svg.getScreenCTM();if(!ctm)return null;
+  const p=pt.matrixTransform(ctm.inverse());
+  let best=null,bestD=1e18;
+  for(const place of mapPlaces){
+    const g=$('mapSvg').querySelector('.place[data-id="'+place.id+'"]');
+    if(!g)continue;
+    const path=g.querySelector('path');
+    let ok=path.isPointInFill(p);
+    const hit=g.querySelector('.hit');
+    if(!ok&&hit){
+      const dx=p.x-(+hit.getAttribute('cx')),dy=p.y-(+hit.getAttribute('cy'));
+      ok=dx*dx+dy*dy<=(+hit.getAttribute('r'))**2;
+    }
+    if(!ok)continue;
+    const dx=p.x-place.cx,dy=p.y-place.cy,d=dx*dx+dy*dy;
+    if(d<bestD){bestD=d;best=place.id}
+  }
+  return best;
+}
+function startMap(key,mode){
+  mapKey=key;mapMode=mode;
+  const group=mapGroupById(key);
+  const filled=mapFilled(key);
+  mapDeck=shuffleIds(group.places.filter(p=>!filled.has(p.id)).map(p=>p.id));
+  $('mapGame').classList.toggle('findmode',mode==='find');
+  $('mapBanner').classList.remove('on');
+  drawMap(group,key!=='us');
+  show('mapGame');
+  if(!mapDeck.length){mapCur=null;paintMap();mapCelebrate()}
+  else mapAdvance();
+}
+$('mapSvg').addEventListener('click',e=>{
+  if(mapMode!=='find'||busy||!mapCur)return;
+  const id=pickPlace(e);
+  if(!id)return;
+  if(id===mapCur.id)mapCorrect();else mapWrongFind();
+});
+function hush(){if('speechSynthesis' in window)speechSynthesis.cancel()}
+tap($('usClose'),()=>{hush();renderHome();show('home')});
+tap($('worldClose'),()=>{hush();renderHome();show('home')});
+tap($('worldModeClose'),()=>{hush();renderContinents();show('worldPick')});
+tap($('mapClose'),()=>{
+  hush();
+  if(mapKey==='us'){usProgressText();show('usMode')}
+  else{worldProgressText();show('worldMode')}
+});
+tap($('usName'),()=>startMap('us','name'));
+tap($('usFind'),()=>startMap('us','find'));
+tap($('worldName'),()=>startMap(worldCont,'name'));
+tap($('worldFind'),()=>startMap(worldCont,'find'));
+tap($('usReset'),()=>resetMap('us'));
+tap($('worldReset'),()=>resetMap(worldCont));
+tap($('mapYes'),()=>{if(mapMode==='name')mapCorrect()});
+tap($('mapNo'),()=>{if(mapMode==='name'&&!busy)mapMiss()});
+tap($('mapAskBtn'),()=>{
+  if(mapMode!=='name'||!mapCur)return;
+  const n=$('mapName');n.textContent=mapCur.name;n.classList.add('show');fitMapText(n);mapSpeakName();
+});
 renderHome();
-window.FlagGame={DATA,META,state,nextItem,startGame,shuffle,get cur(){return cur}};
+window.FlagGame={DATA,META,MAPS,state,nextItem,startGame,shuffle,mapFilled,pickPlace,get cur(){return cur},get mapCur(){return mapCur},get mapDeck(){return mapDeck},get mapKey(){return mapKey}};
 </script>
 </body>
 </html>

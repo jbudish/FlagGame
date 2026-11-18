@@ -71,10 +71,23 @@ def main():
             if item["img"].startswith(("http://", "https://")):
                 raise SystemExit(f"remote image for {item['name']}")
     blob = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
+    maps = json.loads((BUILD / "maps.json").read_text())
+    if len(maps["us"]["places"]) != 50:
+        raise SystemExit("US map should have 50 states")
+    tiny = {"RI", "DE", "CT", "NJ", "MD", "MA", "VT", "NH", "HI"}
+    have_hits = {p["id"] for p in maps["us"]["places"] if p.get("hit")}
+    if tiny - have_hits:
+        raise SystemExit(f"tiny states missing hit targets: {tiny - have_hits}")
+    if len(maps["continents"]) != 6:
+        raise SystemExit("expected 6 continents")
+    if any(c["id"] == "antarctica" for c in maps["continents"]):
+        raise SystemExit("Antarctica should be omitted")
     html = (BUILD / "template.html").read_text()
-    if "/*DATA*/" not in html:
-        raise SystemExit("template is missing /*DATA*/")
-    html = html.replace("/*DATA*/", blob)
+    if "/*DATA*/" not in html or "/*MAPS*/" not in html:
+        raise SystemExit("template is missing a placeholder")
+    html = html.replace("/*DATA*/", blob).replace(
+        "/*MAPS*/", json.dumps(maps, ensure_ascii=False, separators=(",", ":"))
+    )
     out = ROOT / "index.html"
     out.write_text(html)
     print(f"wrote {out} ({out.stat().st_size} bytes) " + " ".join(f"{k}={len(v)}" for k, v in data.items()))
