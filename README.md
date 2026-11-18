@@ -1,9 +1,8 @@
 # Flag Game
 
-A game for kids. On the home screen, pick one:
+A game for kids. On the home screen, pick Flags or Sports.
 
-- **Countries** — flags of the top 100 countries by population
-- **NFL, NHL, NBA, MLB, and MLS** — every current team logo
-- **US States** and **World Map** — name a place, or find it on the map
+- **Flags** — tap a continent on the world map, then play that continent's flags. The map fills green for a correct answer and red for a miss. US States is on this screen too.
+- **Sports** — pick NFL, NHL, NBA, MLB, or MLS. The logo sits next to a map of the US states and Canadian provinces. A right answer turns the home state green and puts the team logo on its city.
 
-Each game keeps its own score and its own shuffled deck. On iPhone, open this site in Safari, then Share > Add to Home Screen.
+On iPhone, open this site in Safari, then Share > Add to Home Screen.

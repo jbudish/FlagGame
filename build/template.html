@@ -20,46 +20,117 @@ body{font-family:"Arial Rounded MT Bold","Trebuchet MS",system-ui,-apple-system,
 .screen.on{display:flex}
 button{font-family:inherit;border:none;cursor:pointer;color:#fff}
 button:active{transform:scale(.94)}
+.xbtn{position:absolute;top:8px;left:8px;width:56px;height:56px;border-radius:50%;background:rgba(0,0,0,.55);font-size:30px;font-weight:bold;line-height:56px;z-index:6;border:3px solid rgba(255,255,255,.85)}
 /* HOME */
-#home{flex-direction:column;align-items:center;gap:1.2vh;
+#home{flex-direction:column;align-items:center;justify-content:center;gap:2vh;
   background:linear-gradient(165deg,#42a5f5,#1565c0);
+  padding:max(10px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+#top{display:flex;align-items:center;justify-content:space-between;width:min(100%,980px);gap:12px;flex:none}
+#home h1{font-size:clamp(26px,8vh,48px);text-shadow:0 3px 0 rgba(0,0,0,.2);line-height:1}
+#reset{background:rgba(0,0,0,.22);font-size:14px;font-weight:800;padding:8px 14px;border-radius:999px}
+#homeChoices{display:flex;gap:3vw;width:min(100%,980px);flex:1;min-height:0}
+.homechoice{flex:1;border-radius:32px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1vh;box-shadow:0 10px 0 rgba(0,0,0,.25);min-width:0}
+.homechoice:active{transform:translateY(6px);box-shadow:0 4px 0 rgba(0,0,0,.25)}
+.homechoice .emoji{font-family:"Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",emoji,sans-serif;font-size:clamp(56px,18vh,100px);line-height:1}
+.homechoice .title{font-size:clamp(32px,9vh,58px);font-weight:800;line-height:1}
+.homechoice .knew{font-size:clamp(22px,6vh,40px);font-weight:800;text-shadow:0 3px 0 rgba(0,0,0,.25)}
+.homechoice.flags{background:linear-gradient(165deg,#7e57c2,#4527a0);box-shadow:0 10px 0 #311b92}
+.homechoice.sports{background:linear-gradient(165deg,#ff8a65,#e64a19);box-shadow:0 10px 0 #bf360c}
+/* PICKERS */
+.picker{flex-direction:column;align-items:center;gap:1.2vh;
+  background:linear-gradient(165deg,#29b6f6,#1565c0);
   padding:max(8px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
-#top{display:flex;align-items:center;justify-content:space-between;width:min(100%,1100px);gap:12px;flex:none}
-#home h1{font-size:clamp(22px,6.4vh,40px);text-shadow:0 3px 0 rgba(0,0,0,.2);line-height:1;letter-spacing:.3px}
-#reset{background:rgba(0,0,0,.22);font-size:13px;font-weight:700;padding:8px 12px;border-radius:999px;opacity:.85;flex:none}
-#tiles{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:1fr 1fr;gap:clamp(6px,1.6vh,12px);width:min(100%,1100px);flex:1;min-height:0}
-.tile{border-radius:22px;box-shadow:0 7px 0 var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:4px 6px;min-width:0;min-height:0}
-.tile:active{transform:translateY(5px);box-shadow:0 2px 0 var(--shadow)}
-.tile .emoji{font-family:"Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",emoji,sans-serif;font-size:clamp(26px,7.2vh,52px);line-height:1}
-.tile .title{font-size:clamp(15px,3.5vh,26px);font-weight:800;letter-spacing:.4px;line-height:1.05}
-.tile .knew{font-size:clamp(28px,8vh,58px);font-weight:800;line-height:.85;color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.28)}
-.tile .knew.frac{font-size:clamp(18px,5.2vh,40px);letter-spacing:-.5px}
-.tile .sub{font-size:clamp(11px,2.5vh,16px);font-weight:700;opacity:.96;line-height:1.1}
-/* GAME */
-#game{background:#263238;
+.picker h2{font-size:clamp(22px,6.5vh,40px);text-shadow:0 3px 0 rgba(0,0,0,.2);line-height:1;height:54px;display:flex;align-items:center;justify-content:center;width:100%}
+#leagueRow{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(6px,1.4vh,12px);width:min(100%,1100px);flex:1;min-height:0;margin-top:6px}
+.league{border-radius:22px;box-shadow:0 7px 0 var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:0}
+.league:active{transform:translateY(5px);box-shadow:0 2px 0 var(--shadow)}
+.league .emoji{font-family:"Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",emoji,sans-serif;font-size:clamp(28px,8vh,52px);line-height:1}
+.league .title{font-size:clamp(16px,4vh,28px);font-weight:800}
+.league .knew{font-size:clamp(28px,8vh,52px);font-weight:800;line-height:.9;text-shadow:0 3px 0 rgba(0,0,0,.25)}
+.league .sub{font-size:clamp(11px,2.4vh,16px);font-weight:700}
+#flagsBody{display:flex;gap:10px;width:min(100%,1100px);flex:1;min-height:0;margin-top:4px}
+#pickMap{flex:1.15;min-width:0;background:#b3e5fc;border-radius:18px;position:relative}
+#pickSvg{width:100%;height:100%;display:block}
+#pickBtns{flex:1;min-width:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(4,1fr);gap:8px}
+.cont{border-radius:16px;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;box-shadow:0 5px 0 rgba(0,0,0,.22);min-width:0}
+.cont .ct{font-size:clamp(13px,3.2vh,22px)}
+.cont .cp{font-size:clamp(16px,4vh,28px);line-height:1}
+.cont.all{grid-column:1 / -1;background:linear-gradient(165deg,#5e35b1,#311b92)}
+#usJump{flex:none;width:min(100%,1100px);background:linear-gradient(165deg,#5c6bc0,#283593);border-radius:18px;font-weight:800;font-size:clamp(16px,4vh,26px);padding:1.2vh 16px;box-shadow:0 6px 0 #1a237e;display:flex;align-items:center;justify-content:center;gap:10px}
+/* SPLIT QUIZ */
+#game{flex-direction:row;background:#4fc3f7;
   padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
-#game.light{background:#fff}
-#flagArea{position:relative;flex:1;display:flex;align-items:center;justify-content:center;padding:10px;min-width:0}
-#flag{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 4px 14px rgba(0,0,0,.5))}
-#game.light #flag{filter:drop-shadow(0 8px 16px rgba(0,0,0,.18))}
+#quizMap{width:42%;position:relative;min-width:0}
+#quizSvg{width:100%;height:100%;display:block}
+#quizPlay{width:58%;display:flex;min-width:0}
+#game.flags #quizPlay{background:#263238}
+#game.sport #quizPlay{background:#fff}
+#flagArea{position:relative;flex:1;display:flex;align-items:center;justify-content:center;padding:8px;min-width:0}
+#flag{width:100%;height:100%;object-fit:contain;display:block}
+#game.flags #flag{filter:drop-shadow(0 4px 14px rgba(0,0,0,.5))}
+#game.sport #flag{filter:drop-shadow(0 8px 16px rgba(0,0,0,.18))}
 #flag.pop{animation:pop .35s ease-out}
 @keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
-.xbtn{position:absolute;top:8px;left:8px;width:56px;height:56px;border-radius:50%;background:rgba(0,0,0,.55);font-size:30px;font-weight:bold;line-height:56px;z-index:6;border:3px solid rgba(255,255,255,.85)}
-#name{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:rgba(255,255,255,.97);color:#0d47a1;font-weight:bold;
-  font-size:min(8vh,5.2vw);padding:.55vh 3vw;border-radius:20px;border:3px solid #1565c0;box-shadow:0 4px 14px rgba(0,0,0,.28);white-space:nowrap;max-width:96%;overflow:hidden;text-align:center;display:none;z-index:4}
-#name.show{display:block;animation:pop .3s ease-out}
-#side{display:flex;flex-direction:column;justify-content:space-between;gap:10px;padding:10px 10px 10px 0;width:min(30vh,24vw);min-width:96px}
-#side button{flex:1;border-radius:22px;font-size:min(14vh,11vw);font-weight:bold;display:flex;align-items:center;justify-content:center;line-height:1}
+#name{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:#fff;color:#0d47a1;font-weight:800;
+  font-size:min(7vh,4.4vw);padding:.45vh 2.5vw;border-radius:16px;border:3px solid #1565c0;display:none;z-index:4;max-width:96%;white-space:nowrap;text-align:center}
+#name.show{display:block}
+#side{display:flex;flex-direction:column;justify-content:space-between;gap:8px;padding:8px 8px 8px 0;width:min(26vh,16vw);min-width:78px}
+#side button{flex:1;border-radius:18px;font-weight:bold;display:flex;align-items:center;justify-content:center}
+#side button svg{width:58%;height:58%}
 #yes{background:#43a047;box-shadow:inset 0 -6px 0 #2e7d32}
-#ask{background:#ffb300;box-shadow:inset 0 -6px 0 #ff8f00}
+#ask{background:#ffb300;color:#fff;font-size:min(10vh,8vw);box-shadow:inset 0 -6px 0 #ff8f00}
 #no{background:#e53935;box-shadow:inset 0 -6px 0 #b71c1c}
-#side button svg{width:60%;height:60%}
-.busy #side button{pointer-events:none}
-.burst{position:fixed;font-size:44px;pointer-events:none;z-index:20;will-change:transform,opacity;animation:fly 1s ease-out forwards}
+.busy #side button,.busy #quizSvg{pointer-events:none}
+#quizNew{position:absolute;right:8px;bottom:8px;z-index:6;background:rgba(0,0,0,.38);font-size:13px;font-weight:800;padding:7px 10px;border-radius:999px}
+#quizSvg .place path{fill:#f7fbff;stroke:#455a64;stroke-width:1.2;vector-effect:non-scaling-stroke}
+#quizSvg .place.ok path{fill:#43a047;stroke:#fff}
+#quizSvg .place.bad path{fill:#e53935;stroke:#fff}
+#quizSvg .place{transform-box:fill-box;transform-origin:center}
+#quizSvg .place.pulse{animation:zoop .9s ease}
+@keyframes zoop{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
+#quizSvg .dot{stroke:#fff;stroke-width:2;pointer-events:none}
+#quizSvg .logo{pointer-events:none}
+#pickSvg .land{stroke:#fff;stroke-width:0.6;cursor:pointer}
+/* US STATES */
+.picker.us{justify-content:center}
+.mode-row{display:flex;gap:3vw;width:min(100%,820px)}
+.bigbtn{flex:1;border-radius:28px;min-height:22vh;padding:2vh 2vw;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6vh}
+.bigbtn b{font-size:clamp(26px,8vh,44px);line-height:1}
+.bigbtn small{font-size:clamp(13px,3.2vh,20px);font-weight:700}
+.bigbtn.name{background:#43a047;box-shadow:0 8px 0 #2e7d32}
+.bigbtn.find{background:#fb8c00;box-shadow:0 8px 0 #ef6c00}
+.bigbtn:active{transform:translateY(5px)}
+.newmap{background:rgba(0,0,0,.22);font-size:16px;font-weight:800;padding:10px 18px;border-radius:999px}
+#mapGame{background:#4fc3f7;flex-direction:row;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+#mapMain{position:relative;flex:1;min-width:0;display:flex;flex-direction:column}
+#mapAsk{display:none;flex:none;align-self:center;margin:8px 8px 0 70px;background:#fff;color:#0d47a1;font-weight:800;font-size:clamp(22px,7vh,40px);padding:6px 18px;border-radius:18px;border:3px solid #1565c0;max-width:92%}
+#mapGame.findmode #mapAsk{display:block}
+#mapStage{flex:1;min-height:0;position:relative}
+#mapSvg{width:100%;height:100%;display:block}
+#mapSvg .place path{fill:#f7fbff;stroke:#455a64;stroke-width:1.3;vector-effect:non-scaling-stroke}
+#mapSvg .place.filled path{fill:var(--c);stroke:#fff}
+#mapSvg .place.hot path{fill:#fff8e1;stroke:#ff6f00;stroke-width:4;animation:mapPulse .9s ease-in-out infinite}
+#mapSvg .place.flash path{fill:#ffee58;stroke:#e65100;stroke-width:5}
+#mapSvg .hit{fill:transparent;pointer-events:all}
+#mapSvg .marker{fill:#0d47a1;stroke:#fff;stroke-width:2;pointer-events:none}
+@keyframes mapPulse{0%,100%{stroke:#ff6f00}50%{stroke:#ffeb3b}}
+#mapName{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:#fff;color:#0d47a1;font-weight:800;font-size:min(8vh,5vw);padding:.5vh 3vw;border-radius:18px;border:3px solid #1565c0;display:none;z-index:4;max-width:94%;white-space:nowrap}
+#mapName.show{display:block}
+#mapBanner{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);background:#fff;color:#2e7d32;font-weight:800;font-size:clamp(28px,8vh,52px);padding:12px 22px;border-radius:24px;border:4px solid #43a047;display:none;z-index:7}
+#mapBanner.on{display:block}
+#mapSide{display:flex;flex-direction:column;justify-content:space-between;gap:10px;padding:10px;width:min(30vh,22vw);min-width:90px}
+#mapGame.findmode #mapSide{display:none}
+#mapSide button{flex:1;border-radius:22px;font-weight:bold;display:flex;align-items:center;justify-content:center}
+#mapSide button svg{width:60%;height:60%}
+#mapYes{background:#43a047;box-shadow:inset 0 -6px 0 #2e7d32}
+#mapAskBtn{background:#ffb300;font-size:min(12vh,9vw);box-shadow:inset 0 -6px 0 #ff8f00}
+#mapNo{background:#e53935;box-shadow:inset 0 -6px 0 #b71c1c}
+.picker .progress{font-size:clamp(18px,5vh,32px);font-weight:800}
+.burst{position:fixed;font-size:40px;pointer-events:none;z-index:20;animation:fly 1s ease-out forwards}
 @keyframes fly{0%{transform:translate(0,0) scale(.4);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(1.3) rotate(var(--r));opacity:0}}
-#bigstar{position:fixed;left:50%;top:50%;font-size:min(40vh,30vw);transform:translate(-50%,-50%) scale(0);z-index:19;pointer-events:none}
+#bigstar{position:fixed;left:50%;top:42%;font-size:min(28vh,22vw);transform:translate(-50%,-50%) scale(0);z-index:19;pointer-events:none}
 #bigstar.go{animation:star .8s ease-out}
-@keyframes star{0%{transform:translate(-50%,-50%) scale(0)}40%{transform:translate(-50%,-50%) scale(1.1)}70%{transform:translate(-50%,-50%) scale(1)}100%{transform:translate(-50%,-50%) scale(1);opacity:0}}
+@keyframes star{0%{transform:translate(-50%,-50%) scale(0)}40%{transform:translate(-50%,-50%) scale(1.1)}100%{transform:translate(-50%,-50%) scale(1);opacity:0}}
 #rotate{position:fixed;inset:0;z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;gap:4vh;background:linear-gradient(160deg,#7e57c2,#4527a0);text-align:center;padding:30px}
 #rotate .phone{width:90px;height:150px;border:8px solid #fff;border-radius:20px;position:relative;animation:turn 2s ease-in-out infinite}
 #rotate .phone:after{content:"";position:absolute;bottom:8px;left:50%;width:22px;height:6px;margin-left:-11px;border-radius:3px;background:#fff}
@@ -67,100 +138,57 @@ button:active{transform:scale(.94)}
 #rotate p{font-size:30px;font-weight:bold;line-height:1.3}
 #rotate small{font-size:18px;opacity:.85}
 @media (orientation:portrait){#rotate{display:flex}}
-/* MAP PICKERS */
-.picker{flex-direction:column;align-items:center;justify-content:center;gap:2vh;
-  background:linear-gradient(165deg,#29b6f6,#1565c0);
-  padding:max(10px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
-.picker h2{font-size:clamp(26px,8vh,46px);text-shadow:0 3px 0 rgba(0,0,0,.22);line-height:1}
-.picker .progress{font-size:clamp(18px,5vh,32px);font-weight:800}
-.mode-row{display:flex;gap:3vw;width:min(100%,820px)}
-.bigbtn{flex:1;border-radius:28px;min-height:22vh;padding:2vh 2vw;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6vh;box-shadow:0 8px 0 rgba(0,0,0,.25)}
-.bigbtn b{font-size:clamp(26px,8vh,44px);line-height:1}
-.bigbtn small{font-size:clamp(13px,3.2vh,20px);font-weight:700;opacity:.95}
-.bigbtn.name{background:#43a047;box-shadow:0 8px 0 #2e7d32}
-.bigbtn.find{background:#fb8c00;box-shadow:0 8px 0 #ef6c00}
-.bigbtn:active{transform:translateY(5px)}
-.newmap{background:rgba(0,0,0,.22);font-size:16px;font-weight:800;padding:10px 18px;border-radius:999px}
-#contGrid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:1fr 1fr;gap:clamp(8px,1.6vh,14px);width:min(100%,980px);height:min(64vh,340px)}
-.cont{border-radius:22px;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 6px 0 rgba(0,0,0,.22);color:#fff}
-.cont .ct{font-size:clamp(16px,4.4vh,30px)}
-.cont .cp{font-size:clamp(20px,5.4vh,36px);line-height:1}
-/* MAP PLAY */
-#mapGame{background:#4fc3f7;flex-direction:row;
-  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
-#mapMain{position:relative;flex:1;min-width:0;display:flex;flex-direction:column}
-#mapAsk{display:none;flex:none;align-self:center;margin:8px 8px 0 70px;background:#fff;color:#0d47a1;font-weight:800;
-  font-size:clamp(22px,7vh,40px);line-height:1.05;padding:6px 18px;border-radius:18px;border:3px solid #1565c0;max-width:92%;text-align:center}
-#mapGame.findmode #mapAsk{display:block}
-#mapStage{flex:1;min-height:0;position:relative}
-#mapSvg{width:100%;height:100%;display:block;touch-action:manipulation}
-#mapSvg .place path{fill:#f7fbff;stroke:#455a64;stroke-width:1.4;vector-effect:non-scaling-stroke}
-#mapSvg .place.filled path{fill:var(--c);stroke:#fff;stroke-width:1.6}
-#mapSvg .place.hot path{fill:#fff8e1;stroke:#ff6f00;stroke-width:4;animation:mapPulse .9s ease-in-out infinite}
-#mapSvg .place.flash path{fill:#ffee58;stroke:#e65100;stroke-width:5}
-#mapSvg .hit{fill:transparent;stroke:none;pointer-events:all}
-#mapSvg .marker{fill:#0d47a1;stroke:#fff;stroke-width:2;pointer-events:none}
-@keyframes mapPulse{0%,100%{stroke:#ff6f00}50%{stroke:#ffeb3b}}
-#mapName{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:#fff;color:#0d47a1;font-weight:800;
-  font-size:min(8vh,5.2vw);padding:.5vh 3vw;border-radius:18px;border:3px solid #1565c0;display:none;z-index:4;max-width:94%;white-space:nowrap}
-#mapName.show{display:block}
-#mapBanner{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);background:#fff;color:#2e7d32;font-weight:800;
-  font-size:clamp(28px,8vh,52px);padding:12px 22px;border-radius:24px;border:4px solid #43a047;box-shadow:0 8px 0 #2e7d32;display:none;z-index:7}
-#mapBanner.on{display:block}
-#mapSide{display:flex;flex-direction:column;justify-content:space-between;gap:10px;padding:10px 10px 10px 0;width:min(30vh,24vw);min-width:96px}
-#mapGame.findmode #mapSide{display:none}
-#mapSide button{flex:1;border-radius:22px;font-size:min(14vh,11vw);font-weight:bold;display:flex;align-items:center;justify-content:center;line-height:1}
-#mapSide button svg{width:60%;height:60%}
-#mapYes{background:#43a047;box-shadow:inset 0 -6px 0 #2e7d32}
-#mapAskBtn{background:#ffb300;box-shadow:inset 0 -6px 0 #ff8f00}
-#mapNo{background:#e53935;box-shadow:inset 0 -6px 0 #b71c1c}
-.busy #mapSide button,.busy #mapSvg{pointer-events:none}
 </style>
 </head>
 <body>
 <div id="home" class="screen on">
-  <div id="top">
-    <h1>Pick a game!</h1>
-    <button id="reset">Reset scores</button>
+  <div id="top"><h1>Pick a game!</h1><button id="reset">Reset scores</button></div>
+  <div id="homeChoices">
+    <button id="goFlags" class="homechoice flags"><span class="emoji">🌍</span><span class="title">Flags</span><span class="knew" id="flagsKnew">0/0</span><span class="sub">countries</span></button>
+    <button id="goSports" class="homechoice sports"><span class="emoji">🏆</span><span class="title">Sports</span><span class="knew" id="sportsKnew">0/0</span><span class="sub">teams</span></button>
   </div>
-  <div id="tiles"></div>
+</div>
+<div id="sportsPick" class="screen picker">
+  <button id="sportsClose" class="xbtn" aria-label="Back">✕</button>
+  <h2>Pick a sport</h2>
+  <div id="leagueRow"></div>
+</div>
+<div id="flagsPick" class="screen picker">
+  <button id="flagsClose" class="xbtn" aria-label="Back">✕</button>
+  <h2>Pick a continent</h2>
+  <div id="flagsBody">
+    <div id="pickMap"><svg id="pickSvg"></svg></div>
+    <div id="pickBtns"></div>
+  </div>
+  <button id="usJump">🇺🇸 US States <span id="usJumpN">0/50</span></button>
 </div>
 <div id="game" class="screen">
-  <div id="flagArea">
-    <button id="close" class="xbtn" aria-label="Back to home">✕</button>
-    <img id="flag" alt="" draggable="false">
-    <div id="name"></div>
+  <div id="quizMap">
+    <button id="qClose" class="xbtn" aria-label="Back">✕</button>
+    <svg id="quizSvg"></svg>
+    <button id="quizNew">New map</button>
   </div>
-  <div id="side">
-    <button id="yes" aria-label="I knew it"><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-    <button id="ask" aria-label="Say the name">?</button>
-    <button id="no" aria-label="Didn't know it"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/></svg></button>
+  <div id="quizPlay">
+    <div id="flagArea">
+      <img id="flag" alt="" draggable="false">
+      <div id="name"></div>
+    </div>
+    <div id="side">
+      <button id="yes" aria-label="I knew it"><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button id="ask" aria-label="Say the name">?</button>
+      <button id="no" aria-label="Didn't know it"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/></svg></button>
+    </div>
   </div>
 </div>
-<div id="usMode" class="screen picker">
-  <button id="usClose" class="xbtn" aria-label="Back to home">✕</button>
+<div id="usMode" class="screen picker us">
+  <button id="usClose" class="xbtn" aria-label="Back">✕</button>
   <h2>US States</h2>
-  <p class="progress" id="usProgress">0/50</p>
+  <p class="progress" id="usProgress">0 of 50 filled</p>
   <div class="mode-row">
     <button id="usName" class="bigbtn name"><b>Name it</b><small>We point. Did you know it?</small></button>
     <button id="usFind" class="bigbtn find"><b>Find it</b><small>We say it. You tap it.</small></button>
   </div>
   <button id="usReset" class="newmap">Start a new map</button>
-</div>
-<div id="worldPick" class="screen picker">
-  <button id="worldClose" class="xbtn" aria-label="Back to home">✕</button>
-  <h2>Pick a continent</h2>
-  <div id="contGrid"></div>
-</div>
-<div id="worldMode" class="screen picker">
-  <button id="worldModeClose" class="xbtn" aria-label="Back">✕</button>
-  <h2 id="worldModeTitle">Africa</h2>
-  <p class="progress" id="worldProgress">0/50</p>
-  <div class="mode-row">
-    <button id="worldName" class="bigbtn name"><b>Name it</b><small>We point. Did you know it?</small></button>
-    <button id="worldFind" class="bigbtn find"><b>Find it</b><small>We say it. You tap it.</small></button>
-  </div>
-  <button id="worldReset" class="newmap">Start a new map</button>
 </div>
 <div id="mapGame" class="screen">
   <div id="mapMain">
@@ -179,324 +207,323 @@ button:active{transform:scale(.94)}
 <div id="bigstar">⭐</div>
 <div id="rotate"><div class="phone"></div><p>Turn your phone sideways!</p><small>Every game works best this way ↻</small></div>
 <script>
-const DATA=/*DATA*/;
 const MAPS=/*MAPS*/;
-const META=[
-  {id:'countries',title:'Countries',icon:'🌍',bg:'linear-gradient(165deg,#7e57c2,#5e35b1)',shadow:'#4527a0',light:false},
-  {id:'nfl',title:'NFL',icon:'🏈',bg:'linear-gradient(165deg,#8d6e63,#5d4037)',shadow:'#3e2723',light:true},
-  {id:'nhl',title:'NHL',icon:'🏒',bg:'linear-gradient(165deg,#26c6da,#00838f)',shadow:'#006064',light:true},
-  {id:'nba',title:'NBA',icon:'🏀',bg:'linear-gradient(165deg,#ffa726,#ef6c00)',shadow:'#e65100',light:true},
-  {id:'mlb',title:'MLB',icon:'⚾',bg:'linear-gradient(165deg,#ef5350,#c62828)',shadow:'#b71c1c',light:true},
-  {id:'mls',title:'MLS',icon:'⚽',bg:'linear-gradient(165deg,#66bb6a,#2e7d32)',shadow:'#1b5e20',light:true},
-  {id:'us',title:'US States',icon:'🇺🇸',bg:'linear-gradient(165deg,#5c6bc0,#283593)',shadow:'#1a237e',kind:'us'},
-  {id:'world',title:'World Map',icon:'🗺️',bg:'linear-gradient(165deg,#26a69a,#00695c)',shadow:'#004d40',kind:'world'}
-];
-const CONT_BG={
-  africa:'linear-gradient(165deg,#ef6c00,#e65100)',
-  asia:'linear-gradient(165deg,#8e24aa,#6a1b9a)',
-  europe:'linear-gradient(165deg,#3949ab,#1a237e)',
-  'north-america':'linear-gradient(165deg,#00897b,#00695c)',
-  'south-america':'linear-gradient(165deg,#7cb342,#558b2f)',
-  oceania:'linear-gradient(165deg,#039be5,#01579b)'
-};
+const QUIZ=/*QUIZ*/;
+const SVGNS='http://www.w3.org/2000/svg';
+const CONT_COLOR={africa:'#ef6c00',asia:'#8e24aa',europe:'#3949ab','north-america':'#00897b','south-america':'#7cb342',oceania:'#039be5'};
+const CONT_NAME={africa:'Africa',asia:'Asia',europe:'Europe','north-america':'N. America','south-america':'S. America',oceania:'Oceania'};
 const $=id=>document.getElementById(id);
 const store={get(k,d){try{const v=localStorage.getItem('flaggame.'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
   set(k,v){try{localStorage.setItem('flaggame.'+k,JSON.stringify(v))}catch(e){}}};
-const state={};
-let gameId=null,items=null,cur=null,busy=false;
-function shuffle(n){const a=Array.from({length:n},(_,i)=>i);for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function deckOk(deck,n){if(!Array.isArray(deck)||deck.length!==n)return false;const seen=new Set();for(const i of deck){if(!Number.isInteger(i)||i<0||i>=n||seen.has(i))return false;seen.add(i)}return true}
-function save(id){store.set('g.'+id,state[id])}
-function loadState(id){
-  const n=DATA[id].length;
-  let s=store.get('g.'+id,null);
-  if(s===null&&id==='countries'){
-    const legacy=store.get('score',null);
-    if(legacy!==null)s={score:legacy,played:store.get('played',0)||0,deck:store.get('deck',null),pos:store.get('pos',0)||0};
-  }
-  const score=s&&typeof s.score==='number'&&s.score>=0?s.score:0;
-  const played=s&&typeof s.played==='number'&&s.played>=0?s.played:0;
-  const pos=s&&typeof s.pos==='number'&&s.pos>=0&&s.pos<=n?s.pos:0;
-  if(!s||!deckOk(s.deck,n))s={score,played,deck:shuffle(n),pos:0};
-  else s={score,played,deck:s.deck,pos};
-  state[id]=s;save(id);
-}
-function mapFilled(key){
-  const group=mapGroupById(key);
-  const known=new Set(group.places.map(p=>p.id));
-  const v=store.get('map.'+key,[]);
-  return new Set((Array.isArray(v)?v:[]).filter(id=>known.has(id)));
-}
-function saveFilled(key,set){store.set('map.'+key,[...set])}
-function mapGroupById(key){
-  if(key==='us')return MAPS.us;
-  return MAPS.continents.find(c=>c.id===key);
-}
-function worldTotals(){
-  let filled=0,total=0;
-  for(const c of MAPS.continents){total+=c.places.length;filled+=mapFilled(c.id).size}
-  return {filled,total};
-}
-function renderHome(){
-  for(const m of META){
-    const el=document.querySelector('.tile[data-game="'+m.id+'"]');
-    if(!el)continue;
-    if(m.kind==='us'){
-      const n=mapFilled('us').size,t=MAPS.us.places.length;
-      el.querySelector('.knew').textContent=n+'/'+t;
-      el.setAttribute('aria-label','US States, '+n+' of '+t+' filled');
-    }else if(m.kind==='world'){
-      const w=worldTotals();
-      el.querySelector('.knew').textContent=w.filled+'/'+w.total;
-      el.setAttribute('aria-label','World Map, '+w.filled+' of '+w.total+' filled');
-    }else{
-      const s=state[m.id];
-      el.querySelector('.knew').textContent=s.score;
-      el.querySelector('.played').textContent=s.played;
-      el.setAttribute('aria-label',m.title+', '+s.score+' knew, '+s.played+' played');
-    }
-  }
-}
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id))}
-function fitName(){
-  const n=$('name');n.style.fontSize='';
-  const max=n.parentElement.clientWidth*0.94;
-  let size=parseFloat(getComputedStyle(n).fontSize);
-  while(n.scrollWidth>max&&size>18){size-=1;n.style.fontSize=size+'px'}
-}
-function nextItem(){
-  const s=state[gameId],n=items.length;
-  if(s.pos>=s.deck.length){const last=s.deck[s.deck.length-1];s.deck=shuffle(n);if(s.deck[0]===last)s.deck.push(s.deck.shift());s.pos=0}
-  cur=items[s.deck[s.pos]];s.pos++;save(gameId);
-  const img=$('flag');img.classList.remove('pop');void img.offsetWidth;
-  img.src=cur.img;img.classList.add('pop');
-  const name=$('name');name.classList.remove('show');name.textContent=cur.name;name.style.fontSize='';
-}
+function tap(el,fn){el.addEventListener('click',e=>{e.preventDefault();fn()}) }
+function hush(){if('speechSynthesis' in window)speechSynthesis.cancel()}
 let actx=null;
 function chime(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();
   const t=actx.currentTime;[523.25,659.25,783.99,1046.5].forEach((f,i)=>{const o=actx.createOscillator(),g=actx.createGain();o.type='triangle';o.frequency.value=f;
   g.gain.setValueAtTime(0,t+i*.09);g.gain.linearRampToValueAtTime(.25,t+i*.09+.02);g.gain.exponentialRampToValueAtTime(.001,t+i*.09+.45);
   o.connect(g).connect(actx.destination);o.start(t+i*.09);o.stop(t+i*.09+.5)})}catch(e){}}
-function burst(){const em=['⭐','🎉','✨','🌟','🎈','💛'];const r=$('flagArea').getBoundingClientRect();const cx=r.left+r.width/2,cy=r.top+r.height/2;
-  for(let i=0;i<18;i++){const s=document.createElement('div');s.className='burst';s.textContent=em[i%em.length];
-    const a=Math.random()*Math.PI*2,d=120+Math.random()*Math.min(innerWidth,innerHeight)*.5;
-    s.style.left=(cx-22)+'px';s.style.top=(cy-22)+'px';s.style.setProperty('--dx',Math.cos(a)*d+'px');s.style.setProperty('--dy',Math.sin(a)*d+'px');s.style.setProperty('--r',(Math.random()*360-180)+'deg');
+function burst(){const em=['⭐','🎉','✨','🌟','🎈','💛'];const r=$('flagArea').getBoundingClientRect();const cx=(r.width?r.left+r.width/2:innerWidth/2),cy=(r.height?r.top+r.height/2:innerHeight/2);
+  for(let i=0;i<16;i++){const s=document.createElement('div');s.className='burst';s.textContent=em[i%em.length];
+    const a=Math.random()*Math.PI*2,d=80+Math.random()*160;
+    s.style.left=(cx-18)+'px';s.style.top=(cy-18)+'px';s.style.setProperty('--dx',Math.cos(a)*d+'px');s.style.setProperty('--dy',Math.sin(a)*d+'px');s.style.setProperty('--r',(Math.random()*180-90)+'deg');
     document.body.appendChild(s);setTimeout(()=>s.remove(),1100)}
   const b=$('bigstar');b.classList.remove('go');void b.offsetWidth;b.classList.add('go')}
-let voice=null;
+let voice=null,busy=false;
 function pickVoice(){const vs=speechSynthesis.getVoices();voice=vs.find(v=>/en[-_]US/i.test(v.lang)&&/samantha|google|natural/i.test(v.name))||vs.find(v=>/en[-_]US/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang))||null}
 if('speechSynthesis' in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
 function say(text){if(!('speechSynthesis' in window))return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);if(voice)u.voice=voice;u.lang=voice?voice.lang:'en-US';u.rate=.85;u.pitch=1.05;speechSynthesis.speak(u)}catch(e){}}
 function lock(ms){busy=true;document.body.classList.add('busy');setTimeout(()=>{busy=false;document.body.classList.remove('busy')},ms)}
-function tap(el,fn){el.addEventListener('click',e=>{e.preventDefault();fn()})}
-function startGame(id){
-  const meta=META.find(m=>m.id===id);
-  gameId=id;items=DATA[id];
-  $('game').classList.toggle('light',!!meta.light);
-  $('flag').alt=meta.light?'team logo':'flag';
-  show('game');nextItem();lock(300);
+function shuffle(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+function normProg(p){p=p||{};return {ok:Array.isArray(p.ok)?p.ok:[],bad:Array.isArray(p.bad)?p.bad:[]}}
+function flagProg(){return normProg(store.get('flags',{ok:[],bad:[]}))}
+function saveFlags(p){store.set('flags',p)}
+function sportProg(id){return normProg(store.get('sport.'+id,{ok:[],bad:[]}))}
+function saveSport(id,p){store.set('sport.'+id,p)}
+function flagItems(which){
+  const src=which==='all'?QUIZ.world.places:MAPS.continents.find(c=>c.id===which).places;
+  return src.filter(p=>QUIZ.flags[p.id]||p.img).map(p=>({id:p.id,name:p.name,say:p.say,img:p.img||QUIZ.flags[p.id],region:p.id}));
 }
-function goHome(){if('speechSynthesis' in window)speechSynthesis.cancel();$('game').classList.remove('light');renderHome();show('home')}
-const tiles=$('tiles');
-for(const m of META){
-  const b=document.createElement('button');
-  b.className='tile';b.dataset.game=m.id;b.style.background=m.bg;b.style.setProperty('--shadow',m.shadow);
-  if(m.kind){
-    b.innerHTML='<span class="emoji" aria-hidden="true">'+m.icon+'</span><span class="title">'+m.title+'</span><span class="knew frac">0/0</span><span class="sub">filled in</span>';
-    tap(b,()=>m.kind==='us'?openUs():openWorld());
-  }else{
-    b.innerHTML='<span class="emoji" aria-hidden="true">'+m.icon+'</span><span class="title">'+m.title+'</span><span class="knew">0</span><span class="sub">⭐ knew · <b class="played">0</b> played</span>';
-    tap(b,()=>startGame(m.id));
+function flagStats(){
+  const items=flagItems('all'), ids=new Set(items.map(i=>i.id)), p=flagProg();
+  return {ok:p.ok.filter(id=>ids.has(id)).length, total:items.length};
+}
+function sportStats(){
+  let ok=0,total=0;
+  for(const id of Object.keys(QUIZ.leagues)){ok+=sportProg(id).ok.length;total+=QUIZ.leagues[id].teams.length}
+  return {ok,total};
+}
+function contStats(id){
+  const items=flagItems(id), ids=new Set(items.map(i=>i.id)), p=flagProg();
+  return {ok:p.ok.filter(x=>ids.has(x)).length, bad:p.bad.filter(x=>ids.has(x)).length, total:items.length};
+}
+function tint(hex,t){
+  const n=parseInt(hex.slice(1),16), r=n>>16,g=(n>>8)&255,b=n&255;
+  const m=(a,c)=>Math.round(a+(c-a)*t);
+  return 'rgb('+m(r,67)+','+m(g,160)+','+m(b,71)+')';
+}
+function renderHome(){
+  const f=flagStats(), s=sportStats();
+  $('flagsKnew').textContent=f.ok+'/'+f.total;
+  $('sportsKnew').textContent=s.ok+'/'+s.total;
+  for(const id of Object.keys(QUIZ.leagues)){
+    const el=document.querySelector('.league[data-league="'+id+'"]');
+    if(!el)continue;
+    const p=sportProg(id), n=QUIZ.leagues[id].teams.length;
+    el.querySelector('.knew').textContent=p.ok.length;
+    el.querySelector('.played').textContent=p.ok.length+p.bad.length;
+    el.setAttribute('aria-label',QUIZ.leagues[id].title+', '+p.ok.length+' of '+n);
   }
-  tiles.appendChild(b);
+  const us=mapFilled('us').size;
+  if($('usJumpN')) $('usJumpN').textContent=us+'/50';
 }
-for(const m of META)if(!m.kind)loadState(m.id);
-tap($('close'),goHome);
-tap($('ask'),()=>{if(!cur)return;const n=$('name');n.textContent=cur.name;n.classList.add('show');fitName();say(cur.say||cur.name)});
-tap($('yes'),()=>{if(busy||!cur)return;const s=state[gameId];s.score++;s.played++;save(gameId);chime();burst();lock(800);setTimeout(nextItem,650)});
-tap($('no'),()=>{if(busy||!cur)return;state[gameId].played++;save(gameId);lock(350);nextItem()});
-tap($('reset'),()=>{
-  if(!confirm('Reset every score back to 0?\n\n(Grown-ups only!)'))return;
-  for(const m of META){if(m.kind)continue;state[m.id]={score:0,played:0,deck:shuffle(DATA[m.id].length),pos:0};save(m.id)}
-  try{['score','played','deck','pos'].forEach(k=>localStorage.removeItem('flaggame.'+k))}catch(e){}
-  renderHome();
-});
-document.addEventListener('gesturestart',e=>e.preventDefault());
-document.addEventListener('dblclick',e=>e.preventDefault());
-const SVGNS='http://www.w3.org/2000/svg';
-let mapKey=null,mapMode=null,mapCur=null,mapDeck=[],mapPlaces=[];
-function shuffleIds(ids){const a=ids.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function usProgressText(){const n=mapFilled('us').size,t=MAPS.us.places.length;$('usProgress').textContent=n+' of '+t+' filled'}
-function worldProgressText(){
-  const g=mapGroupById(worldCont);
-  const n=mapFilled(worldCont).size;
-  $('worldModeTitle').textContent=g.title;
-  $('worldProgress').textContent=n+' of '+g.places.length+' filled';
+const leagues=$('leagueRow');
+for(const id of Object.keys(QUIZ.leagues)){
+  const L=QUIZ.leagues[id], b=document.createElement('button');
+  b.className='league';b.dataset.league=id;b.style.background=L.bg;b.style.setProperty('--shadow',L.shadow);
+  b.innerHTML='<span class="emoji">'+L.icon+'</span><span class="title">'+L.title+'</span><span class="knew">0</span><span class="sub">⭐ knew · <b class="played">0</b> played</span>';
+  tap(b,()=>startQuiz('sport',id));
+  leagues.appendChild(b);
 }
-let worldCont=null;
-function openUs(){usProgressText();show('usMode')}
-function openWorld(){renderContinents();show('worldPick')}
-function renderContinents(){
-  const grid=$('contGrid');grid.innerHTML='';
-  for(const c of MAPS.continents){
-    const n=mapFilled(c.id).size;
-    const b=document.createElement('button');
-    b.className='cont';b.style.background=CONT_BG[c.id];b.dataset.cont=c.id;
-    b.innerHTML='<span class="ct">'+c.title+'</span><span class="cp">'+n+'/'+c.places.length+'</span>';
-    tap(b,()=>{worldCont=c.id;worldProgressText();show('worldMode')});
-    grid.appendChild(b);
-  }
-}
-function resetMap(key){
-  if(!confirm('Start a new map?\n\n(Grown-ups only!)'))return;
-  saveFilled(key,new Set());
-  if(key==='us')usProgressText();else{worldProgressText();renderContinents()}
-  renderHome();
-}
-function drawMap(group,markers){
-  const svg=$('mapSvg');
-  svg.setAttribute('viewBox',group.vb);
+function drawPlaces(svg, places, colorOf){
   svg.replaceChildren();
-  mapPlaces=group.places;
-  for(const p of group.places){
+  for(const p of places){
     const g=document.createElementNS(SVGNS,'g');
-    g.setAttribute('class','place');g.dataset.id=p.id;g.style.setProperty('--c',p.fill);
-    const path=document.createElementNS(SVGNS,'path');path.setAttribute('d',p.d);path.setAttribute('fill-rule','evenodd');g.appendChild(path);
-    if(p.hit){
-      const hit=document.createElementNS(SVGNS,'circle');
-      hit.setAttribute('class','hit');hit.setAttribute('cx',p.hit[0]);hit.setAttribute('cy',p.hit[1]);hit.setAttribute('r',p.hit[2]);
-      g.appendChild(hit);
-      if(markers){
-        const dot=document.createElementNS(SVGNS,'circle');
-        dot.setAttribute('class','marker');dot.setAttribute('cx',p.cx);dot.setAttribute('cy',p.cy);dot.setAttribute('r','8');
-        g.appendChild(dot);
+    g.setAttribute('class','place');g.dataset.id=p.id;
+    const path=document.createElementNS(SVGNS,'path');
+    path.setAttribute('d',p.d);path.setAttribute('fill-rule','evenodd');
+    g.appendChild(path);
+    if(p.dot||p.hit){
+      const c=document.createElementNS(SVGNS,'circle');
+      c.setAttribute('class','dot');c.setAttribute('cx',p.cx);c.setAttribute('cy',p.cy);c.setAttribute('r',p.hit?8:7);
+      g.appendChild(c);
+    }
+    svg.appendChild(g);
+  }
+  if(colorOf) colorOf();
+}
+function paintQuiz(){
+  const svg=$('quizSvg');
+  const prog=quizKind==='sport'?sportProg(quizId):flagProg();
+  const ok=new Set(prog.ok), bad=new Set(prog.bad);
+  for(const g of svg.querySelectorAll('.place')){
+    const id=g.dataset.id;
+    let state='';
+    if(quizKind==='sport'){
+      const teams=QUIZ.leagues[quizId].teams.filter(t=>t.region===id);
+      if(teams.some(t=>ok.has(t.id))) state='ok';
+      else if(teams.some(t=>bad.has(t.id))) state='bad';
+    }else if(ok.has(id)) state='ok';
+    else if(bad.has(id)) state='bad';
+    g.classList.toggle('ok',state==='ok');
+    g.classList.toggle('bad',state==='bad');
+    const dot=g.querySelector('.dot');
+    if(dot) dot.setAttribute('fill',state==='ok'?'#2e7d32':state==='bad'?'#b71c1c':'#546e7a');
+  }
+  const oldMarks=svg.querySelector('g.marks');if(oldMarks)oldMarks.remove();
+  const marks=document.createElementNS(SVGNS,'g');marks.setAttribute('class','marks');
+  if(quizKind==='sport'){
+    const teams=QUIZ.leagues[quizId].teams.filter(t=>ok.has(t.id)||bad.has(t.id));
+    const placed=[];
+    for(const t of teams){
+      let x=t.x,y=t.y,n=0;
+      while(placed.some(p=>Math.hypot(p.x-x,p.y-y)<48)){n++;const a=n*2.3;x=t.x+Math.cos(a)*(36+n*8);y=t.y+Math.sin(a)*(28+n*6)}
+      placed.push({x,y});
+      if(ok.has(t.id)){
+        const img=document.createElementNS(SVGNS,'image');
+        img.setAttribute('class','logo');img.setAttribute('href',t.img);
+        const s=62;img.setAttribute('x',x-s/2);img.setAttribute('y',y-s/2);img.setAttribute('width',s);img.setAttribute('height',s);
+        marks.appendChild(img);
+      }else{
+        const c=document.createElementNS(SVGNS,'circle');
+        c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r',16);c.setAttribute('fill','#e53935');c.setAttribute('stroke','#fff');c.setAttribute('stroke-width','3');
+        marks.appendChild(c);
       }
     }
+  }
+  svg.appendChild(marks);
+}
+function pulse(id){
+  const g=$('quizSvg').querySelector('.place[data-id="'+id+'"]');
+  if(!g)return;
+  g.classList.remove('pulse');void g.getBoundingClientRect();g.classList.add('pulse');
+}
+let quizKind=null,quizId=null,quizItems=[],quizDeck=[],qCur=null,quizReturn='home';
+function showQuestion(){
+  if(!quizDeck.length){quizDeck=shuffle(quizItems.map((_,i)=>i))}
+  qCur=quizItems[quizDeck[0]];
+  const img=$('flag');img.classList.remove('pop');void img.offsetWidth;img.src=qCur.img;img.classList.add('pop');
+  const n=$('name');n.classList.remove('show');n.textContent=qCur.name;n.style.fontSize='';
+}
+function fitName(){const n=$('name');n.style.fontSize='';let size=parseFloat(getComputedStyle(n).fontSize);const max=n.parentElement.clientWidth*0.92;while(n.scrollWidth>max&&size>16){size-=1;n.style.fontSize=size+'px'}}
+function mark(correct){
+  if(busy||!qCur)return;
+  const id=qCur.id;
+  if(quizKind==='sport'){
+    const p=sportProg(quizId);
+    if(correct){if(!p.ok.includes(id))p.ok.push(id);p.bad=p.bad.filter(x=>x!==id)}
+    else if(!p.ok.includes(id)&&!p.bad.includes(id))p.bad.push(id);
+    saveSport(quizId,p);
+    paintQuiz();pulse(qCur.region);
+  }else{
+    const p=flagProg();
+    if(correct){if(!p.ok.includes(id))p.ok.push(id);p.bad=p.bad.filter(x=>x!==id)}
+    else if(!p.ok.includes(id)&&!p.bad.includes(id))p.bad.push(id);
+    saveFlags(p);
+    paintQuiz();pulse(id);
+  }
+  quizDeck.shift();
+  if(correct){chime();burst();lock(700);setTimeout(showQuestion,620)}
+  else{lock(350);setTimeout(showQuestion,280)}
+  renderHome();
+}
+function startQuiz(kind,id){
+  quizKind=kind;quizId=id;quizReturn=kind==='sport'?'sportsPick':'flagsPick';
+  $('game').classList.toggle('sport',kind==='sport');
+  $('game').classList.toggle('flags',kind!=='sport');
+  if(kind==='sport'){
+    quizItems=QUIZ.leagues[id].teams.map(t=>({id:t.id,name:t.name,say:t.say,img:t.img,region:t.region}));
+    const svg=$('quizSvg');svg.setAttribute('viewBox',QUIZ.sportsMap.vb);
+    drawPlaces(svg,QUIZ.sportsMap.places);paintQuiz();
+  }else{
+    quizItems=flagItems(id);
+    const group=id==='all'?QUIZ.world:MAPS.continents.find(c=>c.id===id);
+    const svg=$('quizSvg');svg.setAttribute('viewBox',group.vb);
+    const places=group.places.map(p=>Object.assign({},p,{dot:!!(p.dot||p.hit)}));
+    drawPlaces(svg,places);paintQuiz();
+  }
+  quizDeck=shuffle(quizItems.map((_,i)=>i));
+  show('game');showQuestion();lock(250);
+}
+function renderFlags(){
+  const box=$('pickBtns');box.innerHTML='';
+  const order=['africa','asia','europe','north-america','south-america','oceania'];
+  for(const id of order){
+    const st=contStats(id), b=document.createElement('button');
+    b.className='cont';b.dataset.cont=id;b.style.background=tint(CONT_COLOR[id], st.total?st.ok/st.total:0);
+    b.innerHTML='<span class="ct">'+CONT_NAME[id]+'</span><span class="cp">'+st.ok+'/'+st.total+'</span>';
+    tap(b,()=>startQuiz('flag',id));
+    box.appendChild(b);
+  }
+  const all=contStats('all'), ab=document.createElement('button');
+  ab.className='cont all';ab.innerHTML='<span class="ct">All</span><span class="cp">'+all.ok+'/'+all.total+'</span>';
+  tap(ab,()=>startQuiz('flag','all'));
+  box.appendChild(ab);
+  const svg=$('pickSvg');svg.setAttribute('viewBox',QUIZ.world.vb);svg.replaceChildren();
+  for(const p of QUIZ.world.places){
+    const path=document.createElementNS(SVGNS,'path');
+    path.setAttribute('class','land');path.setAttribute('d',p.d);path.setAttribute('fill-rule','evenodd');
+    const st=contStats(p.cont);
+    path.setAttribute('fill',tint(CONT_COLOR[p.cont]||'#90a4ae', st.total?st.ok/st.total:0));
+    path.dataset.cont=p.cont;
+    svg.appendChild(path);
+  }
+}
+$('pickSvg').addEventListener('click',e=>{
+  const t=e.target;if(t&&t.dataset&&t.dataset.cont)startQuiz('flag',t.dataset.cont);
+});
+tap($('goFlags'),()=>{renderFlags();renderHome();show('flagsPick')});
+tap($('goSports'),()=>{renderHome();show('sportsPick')});
+tap($('sportsClose'),()=>{hush();renderHome();show('home')});
+tap($('flagsClose'),()=>{hush();renderHome();show('home')});
+tap($('qClose'),()=>{hush();renderHome();if(quizReturn==='flagsPick')renderFlags();show(quizReturn)});
+tap($('yes'),()=>mark(true));
+tap($('no'),()=>mark(false));
+tap($('ask'),()=>{if(!qCur)return;const n=$('name');n.textContent=qCur.name;n.classList.add('show');fitName();say(qCur.say||qCur.name)});
+tap($('quizNew'),()=>{
+  if(!confirm('Start this map over?\n\n(Grown-ups only!)'))return;
+  if(quizKind==='sport')saveSport(quizId,{ok:[],bad:[]});
+  else{
+    const p=flagProg(), ids=new Set(quizItems.map(i=>i.id));
+    p.ok=p.ok.filter(id=>!ids.has(id));p.bad=p.bad.filter(id=>!ids.has(id));saveFlags(p);
+  }
+  paintQuiz();renderHome();
+});
+tap($('reset'),()=>{
+  if(!confirm('Reset every score back to 0?\n\n(Grown-ups only!)'))return;
+  saveFlags({ok:[],bad:[]});
+  for(const id of Object.keys(QUIZ.leagues))saveSport(id,{ok:[],bad:[]});
+  renderHome();
+});
+/* US States, kept as its own game */
+function mapFilled(key){const known=new Set(MAPS.us.places.map(p=>p.id));const v=store.get('map.'+key,[]);return new Set((Array.isArray(v)?v:[]).filter(id=>known.has(id)))}
+function saveFilled(key,set){store.set('map.'+key,[...set])}
+let mapMode=null,mapCur=null,mapDeck=[],mapPlaces=[];
+function usProgressText(){const n=mapFilled('us').size;$('usProgress').textContent=n+' of 50 filled'}
+function drawMap(){
+  const svg=$('mapSvg');svg.setAttribute('viewBox',MAPS.us.vb);svg.replaceChildren();mapPlaces=MAPS.us.places;
+  for(const p of MAPS.us.places){
+    const g=document.createElementNS(SVGNS,'g');g.setAttribute('class','place');g.dataset.id=p.id;g.style.setProperty('--c',p.fill);
+    const path=document.createElementNS(SVGNS,'path');path.setAttribute('d',p.d);path.setAttribute('fill-rule','evenodd');g.appendChild(path);
+    if(p.hit){const hit=document.createElementNS(SVGNS,'circle');hit.setAttribute('class','hit');hit.setAttribute('cx',p.hit[0]);hit.setAttribute('cy',p.hit[1]);hit.setAttribute('r',p.hit[2]);g.appendChild(hit)}
     svg.appendChild(g);
   }
 }
 function paintMap(){
-  const filled=mapFilled(mapKey);
+  const filled=mapFilled('us');
   for(const g of $('mapSvg').querySelectorAll('.place')){
     g.classList.toggle('filled',filled.has(g.dataset.id));
     g.classList.toggle('hot',mapMode==='name'&&mapCur&&g.dataset.id===mapCur.id);
     g.classList.remove('flash');
   }
 }
-function fitMapText(el){
-  el.style.fontSize='';
-  const max=el.parentElement.clientWidth*0.9;
-  let size=parseFloat(getComputedStyle(el).fontSize);
-  while(el.scrollWidth>max&&size>16){size-=1;el.style.fontSize=size+'px'}
-}
-function mapSpeakName(){if(!mapCur)return;say(mapCur.say||mapCur.name)}
+function fitMapText(el){el.style.fontSize='';let size=parseFloat(getComputedStyle(el).fontSize);const max=el.parentElement.clientWidth*0.9;while(el.scrollWidth>max&&size>16){size-=1;el.style.fontSize=size+'px'}}
 function showMapRound(){
-  $('mapBanner').classList.remove('on');
-  paintMap();
-  const ask=$('mapAsk'),label=$('mapName');
-  label.classList.remove('show');label.style.fontSize='';
+  $('mapBanner').classList.remove('on');paintMap();
+  const ask=$('mapAsk'),label=$('mapName');label.classList.remove('show');
   if(!mapCur){ask.textContent='';return}
-  if(mapMode==='find'){ask.textContent=mapCur.name;fitMapText(ask);mapSpeakName()}
+  if(mapMode==='find'){ask.textContent=mapCur.name;fitMapText(ask);say(mapCur.name)}
   else ask.textContent='';
 }
-function mapCelebrate(){
-  paintMap();
-  $('mapBanner').classList.add('on');
-  burst();setTimeout(burst,220);setTimeout(burst,440);
-  renderHome();
-}
-function mapAdvance(){
-  if(!mapDeck.length){mapCur=null;mapCelebrate();return}
-  mapCur=mapPlaces.find(p=>p.id===mapDeck[0]);
-  showMapRound();
-}
+function mapCelebrate(){paintMap();$('mapBanner').classList.add('on');burst();renderHome()}
+function mapAdvance(){if(!mapDeck.length){mapCur=null;mapCelebrate();return}mapCur=mapPlaces.find(p=>p.id===mapDeck[0]);showMapRound()}
 function mapCorrect(){
-  if(busy||!mapCur)return;
-  const id=mapCur.id;
-  mapDeck.shift();
-  const filled=mapFilled(mapKey);filled.add(id);saveFilled(mapKey,filled);
-  chime();burst();renderHome();
-  if(!mapDeck.length){lock(900);paintMap();setTimeout(mapCelebrate,500)}
-  else{lock(700);setTimeout(mapAdvance,620)}
+  if(busy||!mapCur)return;const id=mapCur.id;mapDeck.shift();
+  const filled=mapFilled('us');filled.add(id);saveFilled('us',filled);chime();burst();renderHome();
+  if(!mapDeck.length){lock(900);paintMap();setTimeout(mapCelebrate,500)}else{lock(700);setTimeout(mapAdvance,620)}
 }
-function mapMiss(){
-  if(!mapCur)return;
-  const id=mapDeck.shift();
-  mapDeck.push(id);
-  lock(300);
-  setTimeout(mapAdvance,280);
-}
+function mapMiss(){if(!mapCur)return;const id=mapDeck.shift();mapDeck.push(id);lock(300);setTimeout(mapAdvance,280)}
 function mapWrongFind(){
-  if(busy||!mapCur)return;
-  lock(1700);
-  const g=$('mapSvg').querySelector('.place[data-id="'+mapCur.id+'"]');
-  if(g)g.classList.add('flash');
+  if(busy||!mapCur)return;lock(1700);
+  const g=$('mapSvg').querySelector('.place[data-id="'+mapCur.id+'"]');if(g)g.classList.add('flash');
   const id=mapDeck.shift();mapDeck.push(id);
   setTimeout(()=>{if(g)g.classList.remove('flash');mapAdvance()},1500);
 }
 function pickPlace(e){
-  const svg=$('mapSvg'),pt=svg.createSVGPoint();
-  pt.x=e.clientX;pt.y=e.clientY;
-  const ctm=svg.getScreenCTM();if(!ctm)return null;
-  const p=pt.matrixTransform(ctm.inverse());
-  let best=null,bestD=1e18;
+  const svg=$('mapSvg'),pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const ctm=svg.getScreenCTM();if(!ctm)return null;
+  const p=pt.matrixTransform(ctm.inverse());let best=null,bestD=1e18;
   for(const place of mapPlaces){
-    const g=$('mapSvg').querySelector('.place[data-id="'+place.id+'"]');
-    if(!g)continue;
-    const path=g.querySelector('path');
-    let ok=path.isPointInFill(p);
-    const hit=g.querySelector('.hit');
-    if(!ok&&hit){
-      const dx=p.x-(+hit.getAttribute('cx')),dy=p.y-(+hit.getAttribute('cy'));
-      ok=dx*dx+dy*dy<=(+hit.getAttribute('r'))**2;
-    }
-    if(!ok)continue;
-    const dx=p.x-place.cx,dy=p.y-place.cy,d=dx*dx+dy*dy;
-    if(d<bestD){bestD=d;best=place.id}
+    const g=svg.querySelector('.place[data-id="'+place.id+'"]');if(!g)continue;
+    const path=g.querySelector('path');let ok=path.isPointInFill(p);const hit=g.querySelector('.hit');
+    if(!ok&&hit){const dx=p.x-+hit.getAttribute('cx'),dy=p.y-+hit.getAttribute('cy');ok=dx*dx+dy*dy<=(+hit.getAttribute('r'))**2}
+    if(!ok)continue;const d=(p.x-place.cx)**2+(p.y-place.cy)**2;if(d<bestD){bestD=d;best=place.id}
   }
   return best;
 }
-function startMap(key,mode){
-  mapKey=key;mapMode=mode;
-  const group=mapGroupById(key);
-  const filled=mapFilled(key);
-  mapDeck=shuffleIds(group.places.filter(p=>!filled.has(p.id)).map(p=>p.id));
+function startMap(mode){
+  mapMode=mode;const filled=mapFilled('us');
+  mapDeck=shuffle(MAPS.us.places.filter(p=>!filled.has(p.id)).map(p=>p.id));
   $('mapGame').classList.toggle('findmode',mode==='find');
-  $('mapBanner').classList.remove('on');
-  drawMap(group,key!=='us');
-  show('mapGame');
-  if(!mapDeck.length){mapCur=null;paintMap();mapCelebrate()}
-  else mapAdvance();
+  $('mapBanner').classList.remove('on');drawMap();show('mapGame');
+  if(!mapDeck.length){mapCur=null;paintMap();mapCelebrate()}else mapAdvance();
 }
 $('mapSvg').addEventListener('click',e=>{
-  if(mapMode!=='find'||busy||!mapCur)return;
-  const id=pickPlace(e);
-  if(!id)return;
+  if(mapMode!=='find'||busy||!mapCur)return;const id=pickPlace(e);if(!id)return;
   if(id===mapCur.id)mapCorrect();else mapWrongFind();
 });
-function hush(){if('speechSynthesis' in window)speechSynthesis.cancel()}
-tap($('usClose'),()=>{hush();renderHome();show('home')});
-tap($('worldClose'),()=>{hush();renderHome();show('home')});
-tap($('worldModeClose'),()=>{hush();renderContinents();show('worldPick')});
-tap($('mapClose'),()=>{
-  hush();
-  if(mapKey==='us'){usProgressText();show('usMode')}
-  else{worldProgressText();show('worldMode')}
-});
-tap($('usName'),()=>startMap('us','name'));
-tap($('usFind'),()=>startMap('us','find'));
-tap($('worldName'),()=>startMap(worldCont,'name'));
-tap($('worldFind'),()=>startMap(worldCont,'find'));
-tap($('usReset'),()=>resetMap('us'));
-tap($('worldReset'),()=>resetMap(worldCont));
+tap($('usJump'),()=>{usProgressText();show('usMode')});
+tap($('usClose'),()=>{hush();renderFlags();renderHome();show('flagsPick')});
+tap($('mapClose'),()=>{hush();usProgressText();show('usMode')});
+tap($('usName'),()=>startMap('name'));
+tap($('usFind'),()=>startMap('find'));
+tap($('usReset'),()=>{if(!confirm('Start a new map?\n\n(Grown-ups only!)'))return;saveFilled('us',new Set());usProgressText();renderHome()});
 tap($('mapYes'),()=>{if(mapMode==='name')mapCorrect()});
 tap($('mapNo'),()=>{if(mapMode==='name'&&!busy)mapMiss()});
-tap($('mapAskBtn'),()=>{
-  if(mapMode!=='name'||!mapCur)return;
-  const n=$('mapName');n.textContent=mapCur.name;n.classList.add('show');fitMapText(n);mapSpeakName();
-});
+tap($('mapAskBtn'),()=>{if(mapMode!=='name'||!mapCur)return;const n=$('mapName');n.textContent=mapCur.name;n.classList.add('show');fitMapText(n);say(mapCur.name)});
+document.addEventListener('gesturestart',e=>e.preventDefault());
+document.addEventListener('dblclick',e=>e.preventDefault());
 renderHome();
-window.FlagGame={DATA,META,MAPS,state,nextItem,startGame,shuffle,mapFilled,pickPlace,get cur(){return cur},get mapCur(){return mapCur},get mapDeck(){return mapDeck},get mapKey(){return mapKey}};
+window.FlagGame={QUIZ,MAPS,flagProg,sportProg,flagItems,mapFilled,pickPlace,get qCur(){return qCur},get mapCur(){return mapCur}};
 </script>
 </body>
 </html>
