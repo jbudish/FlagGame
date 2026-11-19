@@ -71,8 +71,8 @@ button:active{transform:scale(.94)}
 #game.sport #flag{filter:drop-shadow(0 8px 16px rgba(0,0,0,.18))}
 #flag.pop{animation:pop .35s ease-out}
 @keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
-#name{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:#fff;color:#0d47a1;font-weight:800;
-  font-size:min(7vh,4.4vw);padding:.45vh 2.5vw;border-radius:16px;border:3px solid #1565c0;display:none;z-index:4;max-width:96%;white-space:nowrap;text-align:center}
+#name{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);background:#fff;color:#0d47a1;font-weight:800;
+  font-size:min(7vh,4.4vw);padding:.45vh 2.5vw;border-radius:16px;border:3px solid #1565c0;display:none;z-index:4;max-width:calc(100% - 120px);white-space:nowrap;text-align:center}
 #name.show{display:block}
 #side{display:flex;flex-direction:column;justify-content:space-between;gap:8px;padding:8px 8px 8px 0;width:min(26vh,16vw);min-width:78px}
 #side button{flex:1;border-radius:18px;font-weight:bold;display:flex;align-items:center;justify-content:center}
@@ -81,8 +81,9 @@ button:active{transform:scale(.94)}
 #ask{background:#ffb300;color:#fff;font-size:min(10vh,8vw);box-shadow:inset 0 -6px 0 #ff8f00}
 #no{background:#e53935;box-shadow:inset 0 -6px 0 #b71c1c}
 .busy #side button:not(.goback),.busy #mapSide button:not(.goback),.busy #quizSvg{pointer-events:none}
-.goback{flex:0 0 46px;background:#fb8c00;color:#3e2723;font-size:clamp(13px,2.8vh,16px);font-weight:800;border-radius:16px;box-shadow:inset 0 -4px 0 #ef6c00;line-height:1.05}
-.goback.off,.goback:disabled{background:#cfcfcf;color:#757575;box-shadow:none}
+.goback{position:absolute;left:10px;bottom:10px;z-index:6;width:44px;height:44px;padding:0;border-radius:22px;background:rgba(20,24,28,.62);color:#fff;border:2px solid rgba(255,255,255,.7);font-size:18px;font-weight:800;line-height:1;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:none}
+.goback span{font-size:9px;font-weight:800;letter-spacing:.2px;margin-top:1px}
+.goback.off,.goback:disabled{background:rgba(60,60,60,.28);color:rgba(255,255,255,.45);border-color:rgba(255,255,255,.28)}
 #quizScore,#mapScore{position:absolute;top:12px;left:72px;right:10px;z-index:5;text-align:center;font-weight:800;font-size:clamp(15px,4vh,24px);color:#0d47a1;background:rgba(255,255,255,.94);border-radius:14px;padding:5px 8px;pointer-events:none}
 #quizNew{position:absolute;right:8px;bottom:8px;z-index:6;background:rgba(0,0,0,.38);font-size:13px;font-weight:800;padding:7px 10px;border-radius:999px}
 #quizSvg .place path{fill:#f7fbff;stroke:#455a64;stroke-width:1.2;vector-effect:non-scaling-stroke}
@@ -106,8 +107,10 @@ button:active{transform:scale(.94)}
 .newmap{background:rgba(0,0,0,.22);font-size:16px;font-weight:800;padding:10px 18px;border-radius:999px}
 #mapGame{background:#4fc3f7;flex-direction:row;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
 #mapMain{position:relative;flex:1;min-width:0;display:flex;flex-direction:column}
-#mapAsk{display:none;flex:none;align-self:center;margin:8px 8px 0 70px;background:#fff;color:#0d47a1;font-weight:800;font-size:clamp(22px,7vh,40px);padding:6px 18px;border-radius:18px;border:3px solid #1565c0;max-width:92%}
-#mapGame.findmode #mapAsk{display:block}
+#mapAsk{display:none;position:relative;flex:none;align-self:center;margin:8px 8px 0 70px;background:#fff;color:#0d47a1;font-weight:800;font-size:clamp(22px,7vh,40px);padding:8px 18px 8px 62px;border-radius:18px;border:3px solid #1565c0;max-width:92%;min-height:60px;align-items:center}
+#mapGame.findmode #mapAsk{display:flex;margin-top:56px}
+#mapGame.findmode #mapBack{display:none}
+#mapGame.findmode #mapBackFind{position:absolute;left:8px;bottom:8px}
 #mapStage{flex:1;min-height:0;position:relative}
 #mapSvg{width:100%;height:100%;display:block}
 #mapSvg .place path{fill:#f7fbff;stroke:#455a64;stroke-width:1.3;vector-effect:non-scaling-stroke}
@@ -117,13 +120,12 @@ button:active{transform:scale(.94)}
 #mapSvg .hit{fill:transparent;pointer-events:all}
 #mapSvg .marker{fill:#0d47a1;stroke:#fff;stroke-width:2;pointer-events:none}
 @keyframes mapPulse{0%,100%{stroke:#ff6f00}50%{stroke:#ffeb3b}}
-#mapName{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:#fff;color:#0d47a1;font-weight:800;font-size:min(8vh,5vw);padding:.5vh 3vw;border-radius:18px;border:3px solid #1565c0;display:none;z-index:4;max-width:94%;white-space:nowrap}
+#mapName{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);background:#fff;color:#0d47a1;font-weight:800;font-size:min(8vh,5vw);padding:.5vh 3vw;border-radius:18px;border:3px solid #1565c0;display:none;z-index:4;max-width:calc(100% - 130px);white-space:nowrap}
 #mapName.show{display:block}
 #mapBanner{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);background:#fff;color:#2e7d32;font-weight:800;font-size:clamp(28px,8vh,52px);padding:12px 22px;border-radius:24px;border:4px solid #43a047;display:none;z-index:7}
 #mapBanner.on{display:block}
 #mapSide{display:flex;flex-direction:column;justify-content:space-between;gap:10px;padding:10px;width:min(30vh,22vw);min-width:90px}
-#mapGame.findmode #mapYes,#mapGame.findmode #mapAskBtn,#mapGame.findmode #mapNo{display:none}
-#mapGame.findmode #mapSide{width:118px;justify-content:flex-end}
+#mapGame.findmode #mapSide{display:none}
 #mapSide button{flex:1;border-radius:22px;font-weight:bold;display:flex;align-items:center;justify-content:center}
 #mapSide button svg{width:60%;height:60%}
 #mapYes{background:#43a047;box-shadow:inset 0 -6px 0 #2e7d32}
@@ -177,12 +179,12 @@ button:active{transform:scale(.94)}
     <div id="flagArea">
       <img id="flag" alt="" draggable="false">
       <div id="name"></div>
+      <button id="quizBack" class="goback" disabled aria-label="Go back">↩<span>back</span></button>
     </div>
     <div id="side">
       <button id="yes" aria-label="I knew it"><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <button id="ask" aria-label="Say the name">?</button>
       <button id="no" aria-label="Didn't know it"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/></svg></button>
-      <button id="quizBack" class="goback" disabled>↩ Go back</button>
     </div>
   </div>
 </div>
@@ -200,8 +202,8 @@ button:active{transform:scale(.94)}
   <div id="mapMain">
     <button id="mapClose" class="xbtn" aria-label="Back">✕</button>
     <div id="mapScore">0/50 • —</div>
-    <div id="mapAsk"></div>
-    <div id="mapStage"><svg id="mapSvg"></svg></div>
+    <div id="mapAsk"><button id="mapBackFind" class="goback" disabled aria-label="Go back">↩<span>back</span></button><span id="mapAskText"></span></div>
+    <div id="mapStage"><svg id="mapSvg"></svg><button id="mapBack" class="goback" disabled aria-label="Go back">↩<span>back</span></button></div>
     <div id="mapName"></div>
     <div id="mapBanner">You did it!</div>
   </div>
@@ -209,7 +211,6 @@ button:active{transform:scale(.94)}
     <button id="mapYes" aria-label="I knew it"><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <button id="mapAskBtn" aria-label="Say the name">?</button>
     <button id="mapNo" aria-label="Didn't know it"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/></svg></button>
-    <button id="mapBack" class="goback" disabled>↩ Go back</button>
   </div>
 </div>
 <div id="bigstar">⭐</div>
@@ -377,7 +378,7 @@ function pulse(id){
 let quizKind=null,quizId=null,quizItems=[],quizDeck=[],qCur=null,quizReturn='home',undoStack=[],stepTimer=null;
 function paintUndo(){
   const on=undoStack.length>0;
-  for(const id of ['quizBack','mapBack']){
+  for(const id of ['quizBack','mapBack','mapBackFind']){
     const b=$(id);if(!b)continue;
     b.disabled=!on;b.classList.toggle('off',!on);
     b.setAttribute('aria-disabled',on?'false':'true');
@@ -532,7 +533,7 @@ function paintMap(){
 function fitMapText(el){el.style.fontSize='';let size=parseFloat(getComputedStyle(el).fontSize);const max=el.parentElement.clientWidth*0.9;while(el.scrollWidth>max&&size>16){size-=1;el.style.fontSize=size+'px'}}
 function showMapRound(){
   $('mapBanner').classList.remove('on');paintMap();
-  const ask=$('mapAsk'),label=$('mapName');label.classList.remove('show');
+  const ask=$('mapAskText'),label=$('mapName');label.classList.remove('show');
   if(!mapCur){ask.textContent='';return}
   if(mapMode==='find'){ask.textContent=mapCur.name;fitMapText(ask);say(mapCur.name)}
   else ask.textContent='';
@@ -611,6 +612,7 @@ tap($('usName'),()=>startMap('name'));
 tap($('usFind'),()=>startMap('find'));
 tap($('usReset'),()=>{if(!confirm('Start a new map?\n\n(Grown-ups only!)'))return;saveUs({ok:[],bad:[]});clearUndo();usProgressText();renderHome()});
 tap($('mapBack'),undoMap);
+tap($('mapBackFind'),undoMap);
 tap($('mapYes'),()=>{if(mapMode==='name')mapCorrect()});
 tap($('mapNo'),()=>{if(mapMode==='name'&&!busy)mapMiss()});
 tap($('mapAskBtn'),()=>{if(mapMode!=='name'||!mapCur)return;const n=$('mapName');n.textContent=mapCur.name;n.classList.add('show');fitMapText(n);say(mapCur.name)});
