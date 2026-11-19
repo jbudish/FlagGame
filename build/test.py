@@ -19,6 +19,120 @@ def serve():
     ThreadingHTTPServer(("127.0.0.1", 8765), partial(SimpleHTTPRequestHandler, directory=str(ROOT))).serve_forever()
 
 
+def settle(page):
+    tag = ""
+    for _ in range(6):
+        try:
+            page.wait_for_function(
+                "() => !navigator.serviceWorker || navigator.serviceWorker.controller",
+                timeout=8000,
+            )
+            page.wait_for_selector("#buildTag", timeout=10000)
+            tag = page.locator("#buildTag").inner_text().strip()
+            page.wait_for_timeout(400)
+            if page.locator("#buildTag").inner_text().strip() == tag and tag.startswith("v") and len(tag) == 8:
+                return tag
+        except Exception:
+            page.wait_for_timeout(250)
+    raise AssertionError(f"build tag did not settle ({tag!r})")
+
+
+def webkit_europe(play):
+    browser = play.webkit.launch()
+    iphone = dict(play.devices["iPhone 13"])
+    iphone.pop("default_browser_type", None)
+    iphone["viewport"] = {"width": 844, "height": 390}
+    jump = browser.new_context(**iphone)
+    page = jump.new_page()
+    page.set_default_timeout(30000)
+    page.emulate_media(reduced_motion="reduce")
+    page.goto(URL)
+    settle(page)
+    page.click("#goFlags")
+    page.click('.cont[data-cont="europe"]')
+    page.wait_for_timeout(250)
+    assert page.evaluate("() => FlagGame.force('CHE')")
+    page.click("#yes")
+    page.wait_for_timeout(90)
+    jumped = float(page.evaluate("() => document.getElementById('quizSvg').getAttribute('viewBox').split(/\\s+/)[2]"))
+    print("webkit reduced-motion viewBox width", jumped)
+    assert jumped < 450
+    jump.close()
+
+    ctx = browser.new_context(**iphone)
+    page = ctx.new_page()
+    page.set_default_timeout(30000)
+    page.add_init_script(
+        """() => {
+          if (localStorage.getItem('flaggame.ver')) return;
+          localStorage.setItem('flaggame.flags', JSON.stringify({
+            ok: ['FRA','DEU','ITA','LUX','ALB','SVN','EST'],
+            bad: ['BEL','MNE','XKX']
+          }));
+          localStorage.setItem('flaggame.deck', JSON.stringify([3,1,4]));
+          localStorage.setItem('flaggame.pos', '2');
+          localStorage.setItem('flaggame.score', '40');
+          localStorage.setItem('flaggame.played', '80');
+        }"""
+    )
+    errors = []
+    page.on("pageerror", lambda e: errors.append(str(e)))
+    page.goto(URL)
+    tag = settle(page)
+    migrated = page.evaluate(
+        """() => ({
+          flags: JSON.parse(localStorage.getItem('flaggame.flags')),
+          deck: localStorage.getItem('flaggame.deck'),
+          score: localStorage.getItem('flaggame.score'),
+          ver: JSON.parse(localStorage.getItem('flaggame.ver')),
+          ua: navigator.userAgent
+        })"""
+    )
+    print("webkit", tag, migrated["ua"].split(")")[0] + ")", "saved", migrated["flags"], "ver", migrated["ver"])
+    assert "iPhone" in migrated["ua"]
+    assert migrated["flags"] == {"ok": [], "bad": []}
+    assert migrated["deck"] is None and migrated["score"] is None
+    assert migrated["ver"] == 2
+    page.click("#goFlags")
+    page.click('.cont[data-cont="europe"]')
+    page.wait_for_timeout(300)
+    assert page.evaluate("() => FlagGame.flagItems('europe').length") == 27
+    assert page.evaluate("() => FlagGame.quizIds.length") == 27
+    assert page.evaluate("() => FlagGame.force('CHE')")
+    page.click("#yes")
+    page.wait_for_timeout(480)
+    zoomed = page.evaluate("() => document.getElementById('quizSvg').getAttribute('viewBox')")
+    print("webkit zoom", zoomed)
+    assert float(zoomed.split()[2]) < 1000
+    page.screenshot(path=str(SHOTS / "webkit-europe-zoom.png"))
+    page.wait_for_function("() => !document.body.classList.contains('busy')")
+    answered = 1
+    while answered < 27:
+        page.wait_for_function(
+            """() => document.getElementById('endCard').classList.contains('on') || !document.body.classList.contains('busy')"""
+        )
+        if page.locator("#endCard").evaluate("el => el.classList.contains('on')"):
+            break
+        page.locator("#no" if answered % 6 == 2 else "#yes").click()
+        answered += 1
+        if answered > 30:
+            raise AssertionError("Europe did not end")
+    page.wait_for_function("() => document.getElementById('endCard').classList.contains('on')", timeout=8000)
+    assert answered == 27
+    end = page.locator("#endScore").inner_text()
+    print("webkit europe end", end, "left", page.evaluate("() => FlagGame.quizIds.length"))
+    assert "/27" in end and "%" in end
+    assert page.evaluate("() => FlagGame.quizIds.length") == 0
+    page.wait_for_timeout(400)
+    assert page.locator("#endCard").evaluate("el => el.classList.contains('on')")
+    page.screenshot(path=str(SHOTS / "webkit-europe-end.png"))
+    print("webkit pageerrors", errors)
+    assert errors == []
+    sw = page.evaluate("async () => (await (await fetch('sw.js')).text())")
+    assert f"flaggame-{tag[1:]}" in sw
+    browser.close()
+
+
 def main():
     threading.Thread(target=serve, daemon=True).start()
     errors, reqs = [], []
@@ -30,7 +144,8 @@ def main():
         page.on("pageerror", lambda e: errors.append(str(e)))
         page.on("console", lambda m: errors.append(m.text) if m.type == "error" else None)
         page.goto(URL)
-        page.wait_for_timeout(250)
+        tag = settle(page)
+        print("build", tag)
         assert page.locator("#goFlags").is_visible()
         assert page.locator("#goSports").is_visible()
         assert page.locator(".tile").count() == 0
@@ -392,6 +507,7 @@ def main():
         print("errors", errors)
         assert reqs == [] and errors == []
         browser.close()
+        webkit_europe(p)
     print("OK")
 
 

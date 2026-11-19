@@ -1,5 +1,6 @@
 """Build index.html for the Flag Game."""
 import json
+import subprocess
 from pathlib import Path
 
 from countries import QUIZ_COUNTRIES
@@ -22,6 +23,15 @@ LEAGUES = {
     "mlb": ("MLB", "⚾", "linear-gradient(165deg,#ef5350,#c62828)", "#b71c1c"),
     "mls": ("MLS", "⚽", "linear-gradient(165deg,#66bb6a,#2e7d32)", "#1b5e20"),
 }
+
+
+def build_id():
+    try:
+        return subprocess.check_output(
+            ["git", "rev-parse", "--short=7", "HEAD"], cwd=ROOT, text=True
+        ).strip()
+    except Exception:
+        return "local"
 
 
 def main():
@@ -99,18 +109,25 @@ def main():
         "quiz": codes,
     }
     # Continent shapes already live in MAPS; the page looks flags up by id.
+    rev = build_id()
+    if len(rev) < 7 or not rev.isalnum():
+        raise SystemExit(f"bad build id {rev!r}")
     html = (BUILD / "template.html").read_text()
-    if "/*QUIZ*/" not in html or "/*MAPS*/" not in html:
+    sw = (BUILD / "sw.js").read_text()
+    if "/*QUIZ*/" not in html or "/*MAPS*/" not in html or "/*BUILD*/" not in html or "/*BUILD*/" not in sw:
         raise SystemExit("template is missing a placeholder")
     html = html.replace("/*MAPS*/", json.dumps(maps, ensure_ascii=False, separators=(",", ":")))
     html = html.replace("/*QUIZ*/", json.dumps(quiz, ensure_ascii=False, separators=(",", ":")))
+    html = html.replace("/*BUILD*/", rev)
+    sw = sw.replace("/*BUILD*/", rev)
     script = html.split("<script>", 1)[-1]
     if "espncdn" in script or "https://a.espn" in script or "flag-icons" in script:
         raise SystemExit("page script contains a remote image URL")
     out = ROOT / "index.html"
     out.write_text(html)
+    (ROOT / "sw.js").write_text(sw)
     print(
-        f"wrote {out} ({out.stat().st_size} bytes) flags={flagged} quiz={len(codes)} "
+        f"wrote {out} ({out.stat().st_size} bytes) build={rev} flags={flagged} quiz={len(codes)} "
         + " ".join(f"{k}={len(v['teams'])}" for k, v in leagues.items())
     )
 

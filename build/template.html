@@ -164,6 +164,10 @@ button:active{transform:scale(.94)}
 #rotate p{font-size:30px;font-weight:bold;line-height:1.3}
 #rotate small{font-size:18px;opacity:.85}
 @media (orientation:portrait){#rotate{display:flex}}
+#buildTag{position:absolute;right:8px;bottom:4px;z-index:4;font-size:11px;font-weight:800;letter-spacing:.2px;opacity:.72;pointer-events:none}
+@media (prefers-reduced-motion:reduce){
+  #quizSvg .place.pulse,#mapSvg .place.pulse,.burst,#bigstar.go,#rotate .phone{animation:none}
+}
 </style>
 </head>
 <body>
@@ -173,6 +177,7 @@ button:active{transform:scale(.94)}
     <button id="goFlags" class="homechoice flags"><span class="emoji">🌍</span><span class="title">Flags</span><span class="knew" id="flagsKnew">0/0</span><span class="sub">countries</span></button>
     <button id="goSports" class="homechoice sports"><span class="emoji">🏆</span><span class="title">Sports</span><span class="knew" id="sportsKnew">0/0</span><span class="sub">teams</span></button>
   </div>
+  <div id="buildTag">v/*BUILD*/</div>
 </div>
 <div id="sportsPick" class="screen picker">
   <button id="sportsClose" class="xbtn" aria-label="Back">✕</button>
@@ -261,7 +266,7 @@ function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.to
 function tap(el,fn){el.addEventListener('click',e=>{e.preventDefault();fn()}) }
 function hush(){if('speechSynthesis' in window)speechSynthesis.cancel()}
 let actx=null;
-function chime(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();
+function chime(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended'){const p=actx.resume();if(p&&p.catch)p.catch(()=>{})}
   const t=actx.currentTime;[523.25,659.25,783.99,1046.5].forEach((f,i)=>{const o=actx.createOscillator(),g=actx.createGain();o.type='triangle';o.frequency.value=f;
   g.gain.setValueAtTime(0,t+i*.09);g.gain.linearRampToValueAtTime(.25,t+i*.09+.02);g.gain.exponentialRampToValueAtTime(.001,t+i*.09+.45);
   o.connect(g).connect(actx.destination);o.start(t+i*.09);o.stop(t+i*.09+.5)})}catch(e){}}
@@ -561,15 +566,26 @@ function showMag(svg,b,token){
   clearTimeout(ui.box._t);
   ui.box._t=setTimeout(()=>{if(token===zoomToken) hideMag(svg)},2000);
 }
+function reducedMotion(){try{return window.matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){return false}}
 function animVB(svg,from,to,ms,token,done){
+  let finished=false;
+  function finish(){
+    if(finished||token!==zoomToken) return;
+    finished=true;
+    writeVB(svg,to);
+    try{positionLeader(svg)}catch(e){}
+    if(done) done();
+  }
+  if(!(ms>0)||reducedMotion()){finish();return}
   const t0=performance.now();
+  const backup=setTimeout(finish, ms+400);
   function step(now){
-    if(token!==zoomToken) return;
+    if(token!==zoomToken||finished) return;
     const t=Math.min(1,(now-t0)/ms);
     writeVB(svg, lerpVB(from,to,easeIO(t)));
-    positionLeader(svg);
+    try{positionLeader(svg)}catch(e){}
     if(t<1) requestAnimationFrame(step);
-    else if(done) done();
+    else {clearTimeout(backup);finish()}
   }
   requestAnimationFrame(step);
 }
@@ -579,19 +595,24 @@ function focusPlace(svg,id,done){
   hideMag(svg);
   const g=id&&svg.querySelector('.place[data-id="'+id+'"]');
   const path=g&&g.querySelector('path');
-  if(!home||!path){if(done) done();return}
-  const b=path.getBBox();
-  if(!(b.width>0&&b.height>0)){if(done) done();return}
+  let b=null;
+  try{if(path) b=path.getBBox()}catch(e){b=null}
+  if(!home||!b||!(b.width>0&&b.height>0)){if(done) done();return}
   g.classList.remove('pulse');void g.getBoundingClientRect();g.classList.add('pulse');
   const px=screenMin(svg,home,b);
   const ui=magOf(svg);ui.box.dataset.px=String(Math.round(px));ui.box._g=g;
-  if(px>0&&px<TINY_PX) showMag(svg,b,token);
-  animVB(svg, readVB(svg), frameView(svg,home,b), 400, token, ()=>{
+  if(px>0&&px<TINY_PX) try{showMag(svg,b,token)}catch(e){}
+  const calm=reducedMotion();
+  const ms=calm?0:400;
+  const hold=calm?500:1200;
+  let framed=home;
+  try{framed=frameView(svg,home,b)}catch(e){if(done) done();return}
+  animVB(svg, readVB(svg), framed, ms, token, ()=>{
     if(token!==zoomToken) return;
     setTimeout(()=>{
       if(token!==zoomToken) return;
-      animVB(svg, readVB(svg), home, 400, token, ()=>{if(token===zoomToken&&done) done()});
-    }, 1200);
+      animVB(svg, readVB(svg), home, ms, token, ()=>{if(token===zoomToken&&done) done()});
+    }, hold);
   });
 }
 function zoomSettle(svg){zoomToken++;if(svg&&svg._home) writeVB(svg, svg._home);if(svg) hideMag(svg)}
@@ -862,6 +883,41 @@ tap($('mapNo'),()=>{if(mapMode==='name'&&!busy)mapMiss()});
 tap($('mapAskBtn'),()=>{if(mapMode!=='name'||!mapCur)return;const n=$('mapName');n.textContent=mapCur.name;n.classList.add('show');fitMapText(n);say(mapCur.name)});
 document.addEventListener('gesturestart',e=>e.preventDefault());
 document.addEventListener('dblclick',e=>e.preventDefault());
+function migrateProgress(){
+  const ver=2;
+  if(store.get('ver',0)===ver) return;
+  try{localStorage.removeItem('flaggame.deck');localStorage.removeItem('flaggame.pos');localStorage.removeItem('flaggame.score');localStorage.removeItem('flaggame.played')}catch(e){}
+  const raw=store.get('flags',null);
+  const allow=quizSet();
+  const shape=raw&&!Array.isArray(raw)&&typeof raw==='object'&&Array.isArray(raw.ok);
+  const rawOk=shape?raw.ok:[];
+  const rawBad=shape&&Array.isArray(raw.bad)?raw.bad:[];
+  const foreign=rawOk.concat(rawBad).some(id=>!allow.has(id));
+  if(!shape||foreign) saveFlags({ok:[],bad:[]});
+  else saveFlags({ok:rawOk.filter(id=>allow.has(id)),bad:rawBad.filter(id=>allow.has(id)&&!rawOk.includes(id))});
+  for(const id of Object.keys(QUIZ.leagues)){
+    const p=store.get('sport.'+id,null);
+    const teams=new Set(QUIZ.leagues[id].teams.map(t=>t.id));
+    if(!p||Array.isArray(p)||!Array.isArray(p.ok)){saveSport(id,{ok:[],bad:[]});continue}
+    const bad=Array.isArray(p.bad)?p.bad:[];
+    if(p.ok.concat(bad).some(t=>!teams.has(t))) saveSport(id,{ok:[],bad:[]});
+    else saveSport(id,{ok:p.ok.filter(t=>teams.has(t)),bad:bad.filter(t=>teams.has(t))});
+  }
+  const us=usProg(), states=new Set(MAPS.us.places.map(p=>p.id));
+  saveUs({ok:us.ok.filter(id=>states.has(id)),bad:us.bad.filter(id=>states.has(id))});
+  store.set('ver',ver);
+}
+migrateProgress();
+const BUILD='/*BUILD*/';
+if('serviceWorker' in navigator){
+  let reloading=false;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{
+    if(reloading) return;
+    reloading=true;
+    location.reload();
+  });
+  navigator.serviceWorker.register('./sw.js?v='+BUILD).catch(()=>{});
+}
 renderHome();
 window.FlagGame={QUIZ,MAPS,flagProg,sportProg,flagItems,mapFilled,usProg,pickPlace,scoreText,
   force(id){const i=quizItems.findIndex(t=>t.id===id);if(i<0)return false;quizDeck=[i,...quizDeck.filter(x=>x!==i)];showQuestion();return true},
