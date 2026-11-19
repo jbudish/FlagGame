@@ -36,6 +36,7 @@ def main():
         assert page.locator(".tile").count() == 0
         assert "World Map" not in page.locator("#home").inner_text()
         print("home", page.locator("#flagsKnew").inner_text(), page.locator("#sportsKnew").inner_text())
+        assert page.locator("#flagsKnew").inner_text().startswith("0/100")
         page.screenshot(path=str(SHOTS / "home-two.png"))
 
         page.click("#goSports")
@@ -72,7 +73,7 @@ def main():
         assert "• —" in page.locator("#flagsKnew").inner_text() or "/" in page.locator("#flagsKnew").inner_text()
         assert page.locator("#quizBack").is_disabled()
         page.click("#yes")
-        page.wait_for_timeout(800)
+        page.wait_for_timeout(2200)
         score = page.locator("#quizScore").inner_text()
         print("quiz score", score, "undo", page.evaluate("() => FlagGame.undoCount"))
         assert "•" in score and "%" in score
@@ -167,7 +168,13 @@ def main():
         assert page.locator("#usJump").is_visible()
         africa = page.locator('.cont[data-cont="africa"]').inner_text()
         print("africa button", africa)
-        assert "/" in africa
+        assert "/22" in africa
+        assert "/10" in page.locator('.cont[data-cont="south-america"]').inner_text()
+        assert "/4" in page.locator('.cont[data-cont="oceania"]').inner_text()
+        assert "/100" in page.locator(".cont.all").inner_text()
+        names = page.evaluate("() => FlagGame.flagItems('oceania').map(p => p.name).sort()")
+        assert names == ["Australia", "Fiji", "New Zealand", "Papua New Guinea"], names
+        assert page.evaluate("() => FlagGame.flagItems('all').length") == 100
         page.screenshot(path=str(SHOTS / "flags-picker.png"))
 
         page.evaluate(
@@ -207,8 +214,9 @@ def main():
         page.wait_for_timeout(300)
         state_id = page.evaluate("() => FlagGame.mapCur.id")
         page.click("#mapNo")
-        page.wait_for_timeout(400)
+        page.wait_for_timeout(300)
         assert state_id in page.evaluate("() => FlagGame.usProg().bad")
+        assert state_id not in page.evaluate("() => FlagGame.mapIds")
         page.click("#mapBack")
         page.wait_for_timeout(200)
         assert page.evaluate("() => FlagGame.mapCur.id") == state_id
@@ -220,12 +228,154 @@ def main():
         print("RI hit", ri)
         assert ri["width"] >= 28 and ri["height"] >= 28
         page.click("#mapClose")
+        # One state left: a miss ends the round in red and does not come back.
+        page.evaluate(
+            """() => {
+              const ids = FlagGame.MAPS.us.places.map(p => p.id).filter(id => id !== 'RI');
+              localStorage.setItem('flaggame.map.us', JSON.stringify({ok: ids, bad: []}));
+            }"""
+        )
+        page.click("#usName")
+        page.wait_for_timeout(300)
+        assert page.evaluate("() => FlagGame.mapCur.id") == "RI"
+        page.click("#mapNo")
+        page.wait_for_function("() => document.getElementById('mapEnd').classList.contains('on')")
+        us_end = page.locator("#mapEndScore").inner_text()
+        print("us end", us_end)
+        assert "49/50" in us_end and "%" in us_end
+        assert "RI" in page.evaluate("() => FlagGame.usProg().bad")
+        assert page.evaluate("() => FlagGame.mapIds.length") == 0
+        page.click("#mapBack")
+        page.wait_for_timeout(200)
+        assert page.locator("#mapEnd").is_hidden()
+        assert page.evaluate("() => FlagGame.mapCur.id") == "RI"
+        page.click("#mapClose")
         page.click("#usClose")
         assert page.locator("#pickSvg").is_visible()
 
+        # Zoom onto a tiny European country, with the magnifier inset.
+        page.evaluate("() => localStorage.setItem('flaggame.flags', JSON.stringify({ok:[], bad:[]}))")
+        page.click('.cont[data-cont="europe"]')
+        page.wait_for_timeout(300)
+        assert page.evaluate("() => FlagGame.force('CHE')")
+        page.click("#yes")
+        page.wait_for_timeout(500)
+        mag = page.evaluate(
+            """() => ({
+              on: document.getElementById('quizMag').classList.contains('on'),
+              px: document.getElementById('quizMag').dataset.px,
+              vb: document.getElementById('quizSvg').getAttribute('viewBox'),
+              home: '0 0 1000 861'
+            })"""
+        )
+        print("switzerland zoom", mag)
+        assert mag["on"], mag
+        assert float(mag["px"]) <= 14
+        assert mag["vb"].split()[2] != "1000"
+        page.screenshot(path=str(SHOTS / "europe-zoom.png"))
+        page.screenshot(path=str(SHOTS / "magnifier.png"))
+        page.wait_for_function("() => !document.body.classList.contains('busy')")
+
+        # NFL Northeast: New England Patriots, zoomed on Massachusetts.
+        page.click("#qClose")
+        page.click("#flagsClose")
+        page.click("#goSports")
+        page.evaluate("() => localStorage.setItem('flaggame.sport.nfl', JSON.stringify({ok:[], bad:[]}))")
+        page.click('.league[data-league="nfl"]')
+        page.wait_for_timeout(300)
+        assert page.evaluate("() => FlagGame.force('ne')")
+        page.click("#yes")
+        page.wait_for_timeout(500)
+        nfl_zoom = page.evaluate(
+            """() => document.getElementById('quizSvg').getAttribute('viewBox')"""
+        )
+        print("patriots viewBox", nfl_zoom)
+        assert float(nfl_zoom.split()[2]) < 1000
+        page.screenshot(path=str(SHOTS / "nfl-zoom.png"))
+        page.wait_for_function("() => !document.body.classList.contains('busy')")
+
+        # Full South America round: each country once, then the celebration.
+        page.click("#qClose")
+        page.click("#sportsClose")
+        page.click("#goFlags")
+        page.click('.cont[data-cont="south-america"]')
+        page.wait_for_timeout(300)
+        assert page.evaluate("() => FlagGame.quizIds.length") == 10
+        answered = 0
+        while True:
+            page.wait_for_function(
+                """() => document.getElementById('endCard').classList.contains('on') || !document.body.classList.contains('busy')"""
+            )
+            if page.locator("#endCard").evaluate("el => el.classList.contains('on')"):
+                break
+            page.locator("#no" if answered in (1, 4, 8) else "#yes").click()
+            answered += 1
+            if answered > 12:
+                raise AssertionError("South America did not end")
+        assert answered == 10
+        guy = page.evaluate("() => document.querySelector('#quizSvg [data-id=GUY]').className.baseVal")
+        print("guyana", guy)
+        assert "bg" in guy
+        colors = page.evaluate(
+            """() => ({
+              ok: document.querySelectorAll('#quizSvg .place.ok').length,
+              bad: document.querySelectorAll('#quizSvg .place.bad').length
+            })"""
+        )
+        print("sa end colors", colors, page.locator("#endScore").inner_text())
+        assert colors["ok"] == 7 and colors["bad"] == 3
+        assert page.locator("#endScore").inner_text().startswith("7/10")
+        assert page.locator("#endAgain").is_visible()
+        assert page.locator("#endHome").is_visible()
+        # Undo from the celebration returns the last country.
+        last = page.evaluate("() => FlagGame.undoCount")
+        assert last >= 1
+        page.click("#quizBack")
+        page.wait_for_timeout(250)
+        assert page.locator("#endCard").is_hidden()
+        assert page.evaluate("() => !!FlagGame.qCur")
+        page.click("#yes")
+        page.wait_for_function("() => document.getElementById('endCard').classList.contains('on')", timeout=8000)
+        page.screenshot(path=str(SHOTS / "end-south-america.png"))
+        page.click("#endAgain")
+        page.wait_for_timeout(200)
+        assert page.locator("#endCard").is_hidden()
+        assert page.evaluate("() => FlagGame.quizIds.length") == 10
+        assert page.locator("#quizScore").inner_text().startswith("0/10")
+
+        # Full NFL round, every team once.
+        page.click("#qClose")
+        page.click("#flagsClose")
+        page.click("#goSports")
+        page.evaluate("() => localStorage.setItem('flaggame.sport.nfl', JSON.stringify({ok:[], bad:[]}))")
+        page.click('.league[data-league="nfl"]')
+        page.wait_for_timeout(250)
+        assert page.evaluate("() => FlagGame.quizIds.length") == 32
+        nfl_n = 0
+        while True:
+            page.wait_for_function(
+                """() => document.getElementById('endCard').classList.contains('on') || !document.body.classList.contains('busy')"""
+            )
+            if page.locator("#endCard").evaluate("el => el.classList.contains('on')"):
+                break
+            page.locator("#no" if nfl_n == 3 else "#yes").click()
+            nfl_n += 1
+            if nfl_n > 34:
+                raise AssertionError("NFL did not end")
+        assert nfl_n == 32
+        nfl_end = page.locator("#endScore").inner_text()
+        print("nfl end", nfl_end, "left", page.evaluate("() => FlagGame.quizIds.length"))
+        assert nfl_end.startswith("31/32") and "%" in nfl_end
+        assert page.evaluate("() => FlagGame.quizIds.length") == 0
+        page.click("#quizBack")
+        page.wait_for_timeout(200)
+        assert page.locator("#endCard").is_hidden()
+        assert page.evaluate("() => FlagGame.quizIds[0]")
+        page.click("#qClose")
+        page.click("#sportsClose")
+
         page.set_viewport_size({"width": 1180, "height": 820})
         page.wait_for_timeout(200)
-        page.click("#flagsClose")
         page.screenshot(path=str(SHOTS / "home-tablet.png"))
         assert page.locator("#goFlags").is_visible()
         page.click("#goSports")

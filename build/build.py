@@ -2,6 +2,8 @@
 import json
 from pathlib import Path
 
+from countries import QUIZ_COUNTRIES
+
 ROOT = Path(__file__).resolve().parent.parent
 BUILD = Path(__file__).resolve().parent
 EXPECTED = {"nfl": 32, "nhl": 32, "nba": 30, "mlb": 30, "mls": 30}
@@ -74,7 +76,28 @@ def main():
             flagged += 1
     if flagged < 150:
         raise SystemExit(f"only {flagged} flags")
-    quiz = {"sportsMap": geo["sportsMap"], "leagues": leagues, "world": geo["world"], "flags": geo["flags"]}
+    codes = [code for code, _name in QUIZ_COUNTRIES]
+    if len(codes) != len(set(codes)):
+        raise SystemExit("QUIZ_COUNTRIES has a duplicate code")
+    if not 90 <= len(codes) <= 110:
+        raise SystemExit(f"expected about 100 quiz countries, got {len(codes)}")
+    world_by_id = {place["id"]: place for place in geo["world"]["places"]}
+    map_ids = {place["id"] for cont in maps["continents"] for place in cont["places"]}
+    for code, name in QUIZ_COUNTRIES:
+        place = world_by_id.get(code)
+        if place is None or not place.get("img"):
+            raise SystemExit(f"quiz country {name} ({code}) has no flag on the world map")
+        if code not in map_ids:
+            raise SystemExit(f"quiz country {name} ({code}) is missing from the continent maps")
+        if place["name"] != name:
+            raise SystemExit(f"quiz country {code} is named {place['name']!r}, list says {name!r}")
+    quiz = {
+        "sportsMap": geo["sportsMap"],
+        "leagues": leagues,
+        "world": geo["world"],
+        "flags": geo["flags"],
+        "quiz": codes,
+    }
     # Continent shapes already live in MAPS; the page looks flags up by id.
     html = (BUILD / "template.html").read_text()
     if "/*QUIZ*/" not in html or "/*MAPS*/" not in html:
@@ -86,7 +109,10 @@ def main():
         raise SystemExit("page script contains a remote image URL")
     out = ROOT / "index.html"
     out.write_text(html)
-    print(f"wrote {out} ({out.stat().st_size} bytes) flags={flagged} " + " ".join(f"{k}={len(v['teams'])}" for k, v in leagues.items()))
+    print(
+        f"wrote {out} ({out.stat().st_size} bytes) flags={flagged} quiz={len(codes)} "
+        + " ".join(f"{k}={len(v['teams'])}" for k, v in leagues.items())
+    )
 
 
 if __name__ == "__main__":
