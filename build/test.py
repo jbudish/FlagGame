@@ -69,7 +69,72 @@ def main():
         play_w = page.locator("#quizPlay").bounding_box()["width"]
         print("split", round(map_w), round(play_w), "logo share", round(100 * play_w / (map_w + play_w)))
         assert play_w > map_w
+        assert "• —" in page.locator("#flagsKnew").inner_text() or "/" in page.locator("#flagsKnew").inner_text()
+        assert page.locator("#quizBack").is_disabled()
+        page.click("#yes")
+        page.wait_for_timeout(800)
+        score = page.locator("#quizScore").inner_text()
+        print("quiz score", score, "undo", page.evaluate("() => FlagGame.undoCount"))
+        assert "•" in score and "%" in score
+        assert page.locator("#quizBack").is_disabled() is False
         page.screenshot(path=str(SHOTS / "nfl-split.png"))
+        # Undo returns to that card and drops a logo that this answer added.
+        before_undo = page.evaluate("() => FlagGame.sportProg('nfl').ok.length")
+        page.click("#quizBack")
+        page.wait_for_timeout(200)
+        after_undo = page.evaluate("() => FlagGame.sportProg('nfl').ok.length")
+        assert after_undo <= before_undo
+        assert page.evaluate("() => FlagGame.undoCount") == 0
+
+        # Mets stay correct when a Yankees yes is undone, so New York stays green.
+        page.click("#qClose")
+        page.evaluate("() => localStorage.setItem('flaggame.sport.mlb', JSON.stringify({ok:['nym'], bad:[]}))")
+        page.click('.league[data-league="mlb"]')
+        page.wait_for_timeout(300)
+        assert page.evaluate("() => FlagGame.force('nyy')")
+        page.click("#yes")
+        page.wait_for_timeout(800)
+        both = page.evaluate(
+            """() => ({
+              ok: FlagGame.sportProg('mlb').ok.slice(),
+              ny: document.querySelector('#quizSvg [data-id=NY]').className.baseVal,
+              logos: [...document.querySelectorAll('#quizSvg image')].map(n => n.getAttribute('href'))
+            })"""
+        )
+        print("yankees", both)
+        assert "nym" in both["ok"] and "nyy" in both["ok"]
+        assert "ok" in both["ny"]
+        assert any("mlb/nyy.webp" in src for src in both["logos"]) and any("mlb/nym.webp" in src for src in both["logos"])
+        page.click("#quizBack")
+        page.wait_for_timeout(250)
+        undone = page.evaluate(
+            """() => ({
+              ok: FlagGame.sportProg('mlb').ok.slice(),
+              ny: document.querySelector('#quizSvg [data-id=NY]').className.baseVal,
+              logos: [...document.querySelectorAll('#quizSvg image')].map(n => n.getAttribute('href'))
+            })"""
+        )
+        print("after yankees undo", undone)
+        assert undone["ok"] == ["nym"]
+        assert "ok" in undone["ny"] and "bad" not in undone["ny"].split()
+        assert any("mlb/nym.webp" in src for src in undone["logos"])
+        assert not any("mlb/nyy.webp" in src for src in undone["logos"])
+        # Three undos in a row restore three answers.
+        page.evaluate("() => { FlagGame.force('bos'); }")
+        page.click("#yes")
+        page.wait_for_timeout(200)
+        page.click("#no")
+        page.wait_for_timeout(200)
+        page.evaluate("() => FlagGame.force('lad')")
+        page.click("#yes")
+        page.wait_for_timeout(200)
+        assert page.evaluate("() => FlagGame.undoCount") == 3
+        page.click("#quizBack")
+        page.click("#quizBack")
+        page.click("#quizBack")
+        page.wait_for_timeout(200)
+        assert page.evaluate("() => FlagGame.undoCount") == 0
+        assert page.evaluate("() => FlagGame.sportProg('mlb').ok.slice()") == ["nym"]
 
         # Answering the Bears (already correct) keeps Illinois green and does not add a second logo.
         page.evaluate(
@@ -92,6 +157,8 @@ def main():
         assert page.locator("#sportsPick").is_visible() or page.locator(".league").count() == 5
         page.click("#sportsClose")
         assert page.locator("#goFlags").is_visible()
+        assert "%" in page.locator("#sportsKnew").inner_text()
+        page.screenshot(path=str(SHOTS / "home-with-percent.png"))
 
         page.click("#goFlags")
         page.wait_for_timeout(250)
@@ -136,6 +203,17 @@ def main():
         page.click("#usJump")
         page.wait_for_timeout(150)
         assert page.locator("#usFind").is_visible()
+        page.click("#usName")
+        page.wait_for_timeout(300)
+        state_id = page.evaluate("() => FlagGame.mapCur.id")
+        page.click("#mapNo")
+        page.wait_for_timeout(400)
+        assert state_id in page.evaluate("() => FlagGame.usProg().bad")
+        page.click("#mapBack")
+        page.wait_for_timeout(200)
+        assert page.evaluate("() => FlagGame.mapCur.id") == state_id
+        assert state_id not in page.evaluate("() => FlagGame.usProg().bad")
+        page.click("#mapClose")
         page.click("#usFind")
         page.wait_for_timeout(300)
         ri = page.locator('#mapSvg [data-id="RI"] .hit').bounding_box()
