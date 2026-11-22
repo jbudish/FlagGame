@@ -71,9 +71,11 @@ button:active{transform:scale(.94)}
 #game.sport #flag{filter:drop-shadow(0 8px 16px rgba(0,0,0,.18))}
 #flag.pop{animation:pop .35s ease-out}
 @keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
-#name{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);background:#fff;color:#0d47a1;font-weight:800;
-  font-size:min(7vh,4.4vw);padding:.45vh 2.5vw;border-radius:16px;border:3px solid #1565c0;display:none;z-index:4;max-width:calc(100% - 120px);white-space:nowrap;text-align:center}
-#name.show{display:block}
+#name,#mapLabel{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);background:#fff;color:#0d47a1;font-weight:800;
+  font-size:min(7vh,4.4vw);padding:.45vh 2.5vw;border-radius:16px;border:3px solid #1565c0;display:none;z-index:4;max-width:calc(100% - 24px);white-space:nowrap;text-align:center;pointer-events:none}
+#name.show,#mapLabel.show{display:block}
+#mapLabel{bottom:46px;z-index:8;max-width:calc(100% - 16px)}
+#quizSvg .place.ok,#quizSvg .place.bad{cursor:pointer}
 #side{display:flex;flex-direction:column;justify-content:space-between;gap:8px;padding:8px 8px 8px 0;width:min(26vh,16vw);min-width:78px}
 #side button{flex:1;border-radius:18px;font-weight:bold;display:flex;align-items:center;justify-content:center}
 #side button svg{width:58%;height:58%}
@@ -198,6 +200,7 @@ button:active{transform:scale(.94)}
     <button id="qClose" class="xbtn" aria-label="Back">✕</button>
     <div id="quizScore">0/0 • —</div>
     <svg id="quizSvg"></svg>
+    <div id="mapLabel"></div>
     <svg id="quizLeader" class="leader" hidden><line/></svg>
     <div id="quizMag" class="mag"></div>
     <button id="quizNew">New map</button>
@@ -650,13 +653,60 @@ function replayQuiz(){
 }
 function leaveQuiz(){
   hush();zoomSettle($('quizSvg'));unlock();
+  mapNameToken++;$('mapLabel').classList.remove('show');
   $('endCard').classList.remove('on');
   renderHome();if(quizReturn==='flagsPick')renderFlags();show(quizReturn);
 }
-function fitName(){const n=$('name');n.style.fontSize='';let size=parseFloat(getComputedStyle(n).fontSize);const max=n.parentElement.clientWidth*0.92;while(n.scrollWidth>max&&size>16){size-=1;n.style.fontSize=size+'px'}}
+function fitName(el){el=el||$('name');el.style.fontSize='';let size=parseFloat(getComputedStyle(el).fontSize);const max=el.parentElement.clientWidth*0.9;while(el.scrollWidth>max&&size>16){size-=1;el.style.fontSize=size+'px'}}
+let nameToken=0,mapNameToken=0;
+function flashText(el,text,tokenOf){
+  el.textContent=text;el.classList.add('show');fitName(el);
+  const token=tokenOf();
+  setTimeout(()=>{if(token===tokenOf())el.classList.remove('show')},500);
+}
+function flashAnswerName(text){flashText($('name'),text,()=>nameToken)}
+function flashMapName(text){flashText($('mapLabel'),text,()=>mapNameToken)}
+function countryAt(clientX,clientY){
+  const svg=$('quizSvg'), pt=svg.createSVGPoint();
+  pt.x=clientX;pt.y=clientY;
+  const ctm=svg.getScreenCTM();if(!ctm)return null;
+  const p=pt.matrixTransform(ctm.inverse());
+  const finger=22/Math.max(Math.abs(ctm.a),0.0001);
+  let inside=null,insideD=1e18,near=null,nearD=1e18;
+  for(const g of svg.querySelectorAll('.place.ok, .place.bad')){
+    const path=g.querySelector('path');if(!path)continue;
+    let b;try{b=path.getBBox()}catch(e){continue}
+    const cx=b.x+b.width/2,cy=b.y+b.height/2,dx=p.x-cx,dy=p.y-cy,d=dx*dx+dy*dy;
+    let filled=false;try{filled=path.isPointInFill(p)}catch(e){}
+    if(filled){if(d<insideD){insideD=d;inside=g.dataset.id}continue}
+    if(Math.min(b.width,b.height)<finger*2&&d<=finger*finger&&d<nearD){nearD=d;near=g.dataset.id}
+  }
+  return inside||near;
+}
+function countryName(id){
+  const item=quizItems.find(t=>t.id===id);
+  if(item)return item.name;
+  const group=quizId==='all'?QUIZ.world:MAPS.continents.find(c=>c.id===quizId);
+  const place=group&&group.places.find(p=>p.id===id);
+  return place?place.name:'';
+}
+let lastMapTap=0;
+function onCountryTap(e){
+  if(quizKind!=='flag'||busy)return;
+  const now=performance.now();
+  if(now-lastMapTap<50)return;
+  const id=countryAt(e.clientX,e.clientY);
+  if(!id)return;
+  const name=countryName(id);
+  if(!name)return;
+  lastMapTap=now;
+  mapNameToken++;
+  flashMapName(name);
+}
 function mark(correct){
   if(busy||!qCur)return;
   const id=qCur.id;
+  if(quizKind==='flag'){nameToken++;flashAnswerName(qCur.name)}
   const region=quizKind==='sport'?qCur.region:id;
   const before=quizKind==='sport'?sportProg(quizId):flagProg();
   pushUndo({kind:'quiz',scope:quizKind+':'+quizId,id,prev:statusOf(before,id),deck:quizDeck.slice()});
@@ -739,7 +789,9 @@ tap($('endHome'),leaveQuiz);
 tap($('endAgain'),replayQuiz);
 tap($('yes'),()=>mark(true));
 tap($('no'),()=>mark(false));
-tap($('ask'),()=>{if(!qCur)return;const n=$('name');n.textContent=qCur.name;n.classList.add('show');fitName();say(qCur.say||qCur.name)});
+tap($('ask'),()=>{if(!qCur)return;nameToken++;const n=$('name');n.textContent=qCur.name;n.classList.add('show');fitName();say(qCur.say||qCur.name)});
+$('quizSvg').addEventListener('pointerup',onCountryTap);
+$('quizSvg').addEventListener('click',onCountryTap);
 tap($('quizNew'),()=>{
   if(!confirm('Start this map over?\n\n(Grown-ups only!)'))return;
   replayQuiz();

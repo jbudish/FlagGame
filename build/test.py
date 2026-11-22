@@ -37,6 +37,72 @@ def settle(page):
     raise AssertionError(f"build tag did not settle ({tag!r})")
 
 
+def svg_point(page, code):
+    return page.evaluate(
+        """(code) => {
+          const svg = document.getElementById('quizSvg');
+          const g = svg.querySelector('[data-id="' + code + '"]');
+          const path = g.querySelector('path');
+          const b = path.getBBox();
+          const pt = svg.createSVGPoint();
+          for (let i = 0; i < 9; i++) for (let j = 0; j < 9; j++) {
+            pt.x = b.x + b.width * (i + 0.5) / 9;
+            pt.y = b.y + b.height * (j + 0.5) / 9;
+            if (!path.isPointInFill(pt)) continue;
+            const s = pt.matrixTransform(svg.getScreenCTM());
+            return {x: s.x, y: s.y, cls: g.className.baseVal};
+          }
+          return null;
+        }""",
+        code,
+    )
+
+
+def check_country_names(page):
+    page.evaluate("() => localStorage.setItem('flaggame.flags', JSON.stringify({ok:[], bad:[]}))")
+    page.click("#goFlags")
+    page.click('.cont[data-cont="south-america"]')
+    page.wait_for_timeout(250)
+    assert page.evaluate("() => FlagGame.force('BRA')")
+    page.click("#yes")
+    page.wait_for_timeout(120)
+    assert page.locator("#name").is_visible()
+    assert page.locator("#name").inner_text() == "Brazil"
+    page.wait_for_timeout(550)
+    assert page.locator("#name").is_hidden()
+    page.wait_for_function("() => !document.body.classList.contains('busy')")
+    assert page.evaluate("() => FlagGame.force('ARG')")
+    page.click("#no")
+    page.wait_for_timeout(120)
+    assert page.locator("#name").inner_text() == "Argentina"
+    assert page.locator("#name").is_visible()
+    page.wait_for_timeout(550)
+    assert page.locator("#name").is_hidden()
+    page.wait_for_function("() => !document.body.classList.contains('busy')")
+    brazil = svg_point(page, "BRA")
+    chile = svg_point(page, "CHL")
+    argentina = svg_point(page, "ARG")
+    print("name targets", brazil, argentina, chile)
+    assert "ok" in brazil["cls"] and "bad" in argentina["cls"]
+    assert "ok" not in chile["cls"] and "bad" not in chile["cls"]
+    page.mouse.click(brazil["x"], brazil["y"])
+    page.wait_for_timeout(80)
+    assert page.locator("#mapLabel").is_visible()
+    assert page.locator("#mapLabel").inner_text() == "Brazil"
+    page.wait_for_timeout(550)
+    assert page.locator("#mapLabel").is_hidden()
+    page.touchscreen.tap(argentina["x"], argentina["y"])
+    page.wait_for_timeout(80)
+    assert page.locator("#mapLabel").inner_text() == "Argentina"
+    page.mouse.click(chile["x"], chile["y"])
+    page.wait_for_timeout(80)
+    assert page.locator("#mapLabel").inner_text() == "Argentina"
+    page.wait_for_timeout(550)
+    assert page.locator("#mapLabel").is_hidden()
+    page.click("#qClose")
+    page.click("#flagsClose")
+
+
 def webkit_europe(play):
     browser = play.webkit.launch()
     iphone = dict(play.devices["iPhone 13"])
@@ -502,6 +568,7 @@ def main():
         page.set_viewport_size({"width": 844, "height": 390})
         page.wait_for_timeout(150)
         assert page.locator("#rotate").is_visible() is False
+        check_country_names(page)
 
         print("external", reqs)
         print("errors", errors)
