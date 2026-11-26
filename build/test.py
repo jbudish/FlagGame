@@ -185,6 +185,111 @@ def check_play_by_map(page):
     page.click("#sportsClose")
 
 
+def check_map_zoom(page):
+    def view_after(kind, button, code):
+        if kind == "flag":
+            page.click("#goFlags")
+            page.click(button)
+        else:
+            page.click("#goSports")
+            page.click(button)
+        page.wait_for_timeout(250)
+        assert page.evaluate("(id) => FlagGame.force(id)", code)
+        page.click("#modeMap")
+        page.wait_for_timeout(900)
+        return page.evaluate(
+            """() => {
+              const svg = document.getElementById('quizSvg');
+              const vb = svg.getAttribute('viewBox').split(/\\s+/).map(Number);
+              const home = svg._home;
+              const cur = FlagGame.qCur;
+              return {vb, homeW: home.w, homeH: home.h, id: cur.id, x: cur.x, y: cur.y};
+            }"""
+        )
+
+    page.evaluate("() => localStorage.setItem('flaggame.flags', JSON.stringify({ok:[], bad:[]}))")
+    page.click("#goFlags")
+    page.click('.cont[data-cont="asia"]')
+    page.wait_for_timeout(250)
+    page.click("#modeMap")
+    page.wait_for_timeout(200)
+    brunei = page.evaluate("() => FlagGame.framePlace('BRN')")
+    missing = page.evaluate(
+        """() => ['SGP','BHR'].filter(id => !document.querySelector('#quizSvg [data-id="'+id+'"]'))"""
+    )
+    print("brunei frame", brunei, "absent", missing)
+    assert missing == ["SGP", "BHR"]
+    assert brunei and brunei["w"] < 400
+    page.click("#qClose")
+    page.click("#flagsClose")
+    slv = view_after("flag", '.cont[data-cont="north-america"]', "SLV")
+    jam = None
+    page.evaluate("() => FlagGame.force('JAM')")
+    page.wait_for_timeout(900)
+    jam = page.evaluate(
+        """() => {
+          const svg = document.getElementById('quizSvg');
+          const vb = svg.getAttribute('viewBox').split(/\\s+/).map(Number);
+          return {vb, id: FlagGame.qCur.id};
+        }"""
+    )
+    belize = page.evaluate("() => FlagGame.framePlace('BLZ')")
+    print("zoom SLV", slv["vb"], "JAM", jam["vb"], "belize frame", belize)
+    assert slv["vb"][2] < slv["homeW"] * 0.45
+    assert jam["id"] == "JAM" and jam["vb"][2] < slv["homeW"] * 0.45
+    assert brunei and brunei["w"] < 1000 * 0.35
+    assert belize and belize["w"] < 1000 * 0.45
+    # El Salvador view should include nearby Belize as context, or sit in that region.
+    near = page.evaluate(
+        """(vb) => {
+          const g = document.querySelector('#quizSvg [data-id="BLZ"] path');
+          const b = g.getBBox();
+          const cx = b.x + b.width / 2, cy = b.y + b.height / 2;
+          return cx > vb[0] - vb[2] && cx < vb[0] + vb[2] * 2 && cy > vb[1] - vb[3] && cy < vb[1] + vb[3] * 2;
+        }""",
+        slv["vb"],
+    )
+    print("belize near el salvador view", near)
+    page.click("#qClose")
+    page.click("#flagsClose")
+    page.evaluate("() => localStorage.setItem('flaggame.sport.nhl', JSON.stringify({ok:[], bad:[]}))")
+    nyr = view_after("sport", '.league[data-league="nhl"]', "nyr")
+    page.evaluate("() => FlagGame.force('nyi')")
+    page.wait_for_timeout(900)
+    nyi = page.evaluate(
+        """() => {
+          const vb = document.getElementById('quizSvg').getAttribute('viewBox').split(/\\s+/).map(Number);
+          return {vb, x: FlagGame.qCur.x, y: FlagGame.qCur.y, id: FlagGame.qCur.id};
+        }"""
+    )
+    page.evaluate("() => FlagGame.force('nj')")
+    page.wait_for_timeout(900)
+    nj = page.evaluate(
+        """() => {
+          const vb = document.getElementById('quizSvg').getAttribute('viewBox').split(/\\s+/).map(Number);
+          const spot = document.querySelector('#quizSvg .spot circle');
+          return {vb, x: FlagGame.qCur.x, id: FlagGame.qCur.id, spot: !!spot};
+        }"""
+    )
+    print("nhl zoom", nyr["vb"], nyi["vb"], nj["vb"])
+    assert nyr["vb"][2] < nyr["homeW"] * 0.35
+    assert nyi["id"] == "nyi" and nj["id"] == "nj" and nj["spot"]
+    assert abs((nyi["vb"][0] + nyi["vb"][2] / 2) - (nyr["vb"][0] + nyr["vb"][2] / 2)) > 1
+    # Wheel zoom still leaves a later question framed.
+    box = page.locator("#quizSvg").bounding_box()
+    page.mouse.move(box["x"] + 80, box["y"] + 80)
+    page.mouse.wheel(0, -200)
+    page.wait_for_timeout(100)
+    page.evaluate("() => FlagGame.force('bos')")
+    page.wait_for_timeout(900)
+    bos = page.evaluate(
+        """() => document.getElementById('quizSvg').getAttribute('viewBox').split(/\\s+/).map(Number)[2]"""
+    )
+    assert bos < nyr["homeW"] * 0.4
+    page.click("#qClose")
+    page.click("#sportsClose")
+
+
 def webkit_europe(play):
     browser = play.webkit.launch()
     iphone = dict(play.devices["iPhone 13"])
@@ -652,6 +757,7 @@ def main():
         assert page.locator("#rotate").is_visible() is False
         check_country_names(page)
         check_play_by_map(page)
+        check_map_zoom(page)
 
         print("external", reqs)
         print("errors", errors)

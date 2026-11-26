@@ -98,9 +98,10 @@ button:active{transform:scale(.94)}
 #quizSvg .logo{pointer-events:none}
 #quizSvg .place.bg path{fill:#d5dde3;stroke:#b0bec5}
 #quizSvg .place.bg .dot{display:none}
-#quizSvg .place.hot path{fill:#fff8e1;stroke:#ff6f00;stroke-width:4;animation:mapPulse .9s ease-in-out infinite}
-#quizSvg .spot{pointer-events:none}
-#quizSvg .spot circle{fill:rgba(255,179,0,.72);stroke:#e65100;stroke-width:6;animation:mapPulse .9s ease-in-out infinite}
+#quizSvg .place.hot path{fill:#ffb74d;stroke:#e65100;stroke-width:6;vector-effect:non-scaling-stroke;animation:mapPulse .9s ease-in-out infinite}
+#quizSvg .spot{pointer-events:none;transform-box:fill-box;transform-origin:center;animation:spotPulse 1s ease-in-out infinite}
+#quizSvg .spot circle{fill:rgba(255,111,0,.9);stroke:#bf360c}
+@keyframes spotPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.22)}}
 .leader{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:6;overflow:visible}
 .leader[hidden]{display:none}
 .leader line{stroke:#fff;stroke-width:3;stroke-linecap:round}
@@ -186,7 +187,7 @@ button:active{transform:scale(.94)}
 #game.mapmode #endCard{position:fixed;inset:0}
 #buildTag{position:absolute;right:8px;bottom:4px;z-index:4;font-size:11px;font-weight:800;letter-spacing:.2px;opacity:.72;pointer-events:none}
 @media (prefers-reduced-motion:reduce){
-  #quizSvg .place.pulse,#mapSvg .place.pulse,.burst,#bigstar.go,#rotate .phone{animation:none}
+  #quizSvg .place.pulse,#quizSvg .place.hot path,#quizSvg .spot,#mapSvg .place.pulse,.burst,#bigstar.go,#rotate .phone{animation:none}
 }
 </style>
 </head>
@@ -197,7 +198,7 @@ button:active{transform:scale(.94)}
     <button id="goFlags" class="homechoice flags"><span class="emoji">🌍</span><span class="title">Flags</span><span class="knew" id="flagsKnew">0/0</span><span class="sub">countries</span></button>
     <button id="goSports" class="homechoice sports"><span class="emoji">🏆</span><span class="title">Sports</span><span class="knew" id="sportsKnew">0/0</span><span class="sub">teams</span></button>
   </div>
-  <div id="buildTag">v89b5ac7</div>
+  <div id="buildTag">v6e652e6</div>
 </div>
 <div id="sportsPick" class="screen picker">
   <button id="sportsClose" class="xbtn" aria-label="Back">✕</button>
@@ -496,7 +497,19 @@ function rememberHome(svg){
   svg._home={x:p[0],y:p[1],w:p[2],h:p[3]};
 }
 function readVB(svg){const p=svg.getAttribute('viewBox').split(/\s+/).map(Number);return {x:p[0],y:p[1],w:p[2],h:p[3]}}
-function writeVB(svg,v){svg.setAttribute('viewBox',[v.x,v.y,v.w,v.h].join(' '));fitMarks(svg)}
+function writeVB(svg,v){svg.setAttribute('viewBox',[v.x,v.y,v.w,v.h].join(' '));fitMarks(svg);fitDots(svg)}
+function fitDots(svg){
+  const home=svg._home;if(!home)return;
+  const vb=readVB(svg), rect=svg.getBoundingClientRect();
+  const scale=Math.min((rect.width||1)/vb.w,(rect.height||1)/vb.h);
+  const homeScale=Math.min((rect.width||1)/home.w,(rect.height||1)/home.h);
+  const zoomed=scale>homeScale*1.25;
+  svg.querySelectorAll('.dot').forEach(dot=>{
+    if(!dot.dataset.base)dot.dataset.base=dot.getAttribute('r')||'7';
+    dot.setAttribute('r',zoomed?String(Math.min(+dot.dataset.base,6/Math.max(scale,0.0001))):dot.dataset.base);
+    dot.setAttribute('stroke-width',zoomed?String(1.5/Math.max(scale,0.0001)):'2');
+  });
+}
 function fitMarks(svg){
   const home=svg._home;if(!home)return;
   const k=readVB(svg).w/home.w;
@@ -642,6 +655,129 @@ function focusPlace(svg,id,done){
   });
 }
 function zoomSettle(svg){zoomToken++;if(svg&&svg._home) writeVB(svg, svg._home);if(svg) hideMag(svg)}
+function frameBox(svg, home, box, city){
+  const rect=svg.getBoundingClientRect();
+  const aspect=(rect.width&&rect.height)?rect.width/rect.height:(home.w/home.h);
+  const span=Math.max(box.w, box.h, city?8:1);
+  const panelMin=Math.max(Math.min(rect.width||700, rect.height||380), 200);
+  const rel=span/Math.min(home.w, home.h);
+  let targetPx;
+  if(city) targetPx=Math.min(panelMin*0.16, 72);
+  else if(rel>0.38) targetPx=panelMin*0.7;
+  else if(rel>0.16) targetPx=panelMin*0.48;
+  else if(rel>0.06) targetPx=panelMin*0.32;
+  else targetPx=Math.min(panelMin*0.34, 170);
+  let viewMin=span*panelMin/targetPx;
+  viewMin=Math.max(viewMin, span*(city?6:2.5));
+  if(city) viewMin=Math.max(viewMin, 78);
+  viewMin=Math.min(viewMin, Math.min(home.w, home.h));
+  let w,h;
+  if(aspect>=1){h=viewMin;w=h*aspect}else{w=viewMin;h=w/aspect}
+  if(w>home.w){w=home.w;h=w/aspect}
+  if(h>home.h){h=home.h;w=Math.min(home.w,h*aspect);h=w/aspect}
+  const cx=box.x+box.w/2, cy=box.y+box.h/2;
+  let x=cx-w/2, y=cy-h/2;
+  const play=$('quizPlay').getBoundingClientRect();
+  if(rect.width&&play.width&&play.left>rect.left+40){
+    const visible=(Math.min(rect.right, play.left)-rect.left)/rect.width;
+    x+=w*(0.5-visible/2);
+  }
+  x=Math.max(home.x, Math.min(x, home.x+home.w-w));
+  y=Math.max(home.y, Math.min(y, home.y+home.h-h));
+  return {x,y,w,h};
+}
+function targetBox(svg){
+  if(!qCur)return null;
+  if(quizKind==='sport') return {x:qCur.x-8,y:qCur.y-8,w:16,h:16,city:true};
+  const g=svg.querySelector('.place[data-id="'+qCur.id+'"]');
+  const path=g&&g.querySelector('path');
+  if(!path)return null;
+  let b;try{b=path.getBBox()}catch(e){return null}
+  if(!(b.width>0||b.height>0))return null;
+  return {x:b.x,y:b.y,w:Math.max(b.width,0.8),h:Math.max(b.height,0.8),city:false};
+}
+function questionFrame(svg){
+  const home=svg._home, box=targetBox(svg);
+  if(!home||!box)return home;
+  return frameBox(svg, home, box, box.city);
+}
+function coverFrames(a,b,home){
+  const x0=Math.min(a.x,b.x), y0=Math.min(a.y,b.y);
+  const x1=Math.max(a.x+a.w,b.x+b.w), y1=Math.max(a.y+a.h,b.y+b.h);
+  const aspect=a.w/Math.max(a.h,0.001);
+  let w=(x1-x0)*1.2, h=(y1-y0)*1.2;
+  if(w/h<aspect) w=h*aspect; else h=w/aspect;
+  w=Math.min(Math.max(w, Math.max(a.w,b.w)), home.w);
+  h=Math.min(Math.max(h, Math.max(a.h,b.h)), home.h);
+  if(w/h<aspect) h=w/aspect; else w=h*aspect;
+  if(w>home.w){w=home.w;h=w/aspect}
+  if(h>home.h){h=home.h;w=Math.min(home.w,h*aspect);h=w/aspect}
+  const cx=(x0+x1)/2, cy=(y0+y1)/2;
+  return {
+    x:Math.max(home.x, Math.min(cx-w/2, home.x+home.w-w)),
+    y:Math.max(home.y, Math.min(cy-h/2, home.y+home.h-h)),
+    w,h
+  };
+}
+function zoomToFrame(svg, frame, done){
+  const home=svg._home||frame;
+  const from=readVB(svg);
+  const token=++zoomToken;
+  const ms=reducedMotion()?0:420;
+  const dist=Math.hypot((from.x+from.w/2)-(frame.x+frame.w/2),(from.y+from.h/2)-(frame.y+frame.h/2));
+  const far=dist>Math.max(from.w, frame.w)*0.85;
+  hideMag(svg);
+  if(!far||!(ms>0)){animVB(svg, from, frame, ms, token, done);return}
+  const mid=coverFrames(from, frame, home);
+  animVB(svg, from, mid, 260, token, ()=>{
+    if(token!==zoomToken)return;
+    animVB(svg, readVB(svg), frame, 400, token, done);
+  });
+}
+function zoomToCurrent(done){
+  const svg=$('quizSvg');
+  paintTarget();
+  const frame=questionFrame(svg);
+  if(!frame){if(done)done();return}
+  zoomToFrame(svg, frame, ()=>{paintTarget();if(done)done()});
+}
+function zoomHomeThen(done){
+  const svg=$('quizSvg');
+  const home=svg._home;if(!home){if(done)done();return}
+  zoomToFrame(svg, home, done);
+}
+let mapGesture=0;
+function noteGesture(){mapGesture=performance.now()}
+function zoomBy(factor, clientX, clientY){
+  if(quizView!=='map')return;
+  const svg=$('quizSvg'), home=svg._home;if(!home)return;
+  const vb=readVB(svg);
+  const aspect=vb.w/Math.max(vb.h,0.001);
+  let w=Math.max(16, Math.min(home.w, vb.w*factor));
+  let h=w/aspect;
+  if(h>home.h){h=home.h;w=Math.min(home.w,h*aspect);h=w/aspect}
+  const pt=svg.createSVGPoint();pt.x=clientX;pt.y=clientY;
+  const ctm=svg.getScreenCTM();if(!ctm)return;
+  const p=pt.matrixTransform(ctm.inverse());
+  const relX=(p.x-vb.x)/vb.w, relY=(p.y-vb.y)/vb.h;
+  let x=p.x-relX*w, y=p.y-relY*h;
+  x=Math.max(home.x, Math.min(x, home.x+home.w-w));
+  y=Math.max(home.y, Math.min(y, home.y+home.h-h));
+  zoomToken++;
+  writeVB(svg,{x,y,w,h});
+}
+function panBy(dx,dy){
+  if(quizView!=='map')return;
+  const svg=$('quizSvg'), home=svg._home;if(!home)return;
+  const vb=readVB(svg);
+  if(vb.w>=home.w-1&&vb.h>=home.h-1)return;
+  const ctm=svg.getScreenCTM();if(!ctm)return;
+  let x=vb.x-dx/ctm.a, y=vb.y-dy/ctm.d;
+  x=Math.max(home.x, Math.min(x, home.x+home.w-vb.w));
+  y=Math.max(home.y, Math.min(y, home.y+home.h-vb.h));
+  zoomToken++;
+  writeVB(svg,{x,y,w:vb.w,h:vb.h});
+}
 function clearTarget(){
   const svg=$('quizSvg');
   svg.querySelectorAll('.place.hot').forEach(g=>{
@@ -655,28 +791,28 @@ function paintTarget(){
   clearTarget();
   if(quizView!=='map'||!qCur)return;
   const svg=$('quizSvg');
-  if(quizKind!=='sport'){
-    const g=svg.querySelector('.place[data-id="'+qCur.id+'"]');
-    if(!g)return;
-    g.classList.add('hot');
-    const dot=g.querySelector('.dot');
-    const path=g.querySelector('path');
-    let b=null;try{b=path.getBBox()}catch(e){}
-    const ctm=svg.getScreenCTM();
-    const scale=ctm?Math.abs(ctm.a):1;
-    if(b&&Math.min(b.width,b.height)*scale<36){
-      const spot=document.createElementNS(SVGNS,'g');spot.setAttribute('class','spot');
-      const ring=document.createElementNS(SVGNS,'circle');
-      ring.setAttribute('cx',b.x+b.width/2);ring.setAttribute('cy',b.y+b.height/2);
-      ring.setAttribute('r',String(Math.max(18,22/Math.max(scale,0.0001))));
-      spot.appendChild(ring);svg.appendChild(spot);
-    }else if(dot){if(!dot.dataset.r)dot.dataset.r=dot.getAttribute('r')||'7';dot.setAttribute('r','14');dot.setAttribute('fill','#ff6f00')}
-    return;
+  const frame=questionFrame(svg);
+  const rect=svg.getBoundingClientRect();
+  const scale=frame?Math.min((rect.width||700)/frame.w,(rect.height||380)/frame.h):1;
+  const radius=Math.max(4, 22/Math.max(scale,0.0001));
+  const stroke=Math.max(0.3, 3/Math.max(scale,0.0001));
+  function addSpot(x,y){
+    const spot=document.createElementNS(SVGNS,'g');spot.setAttribute('class','spot');
+    const ring=document.createElementNS(SVGNS,'circle');
+    ring.setAttribute('cx',x);ring.setAttribute('cy',y);ring.setAttribute('r',radius);
+    ring.setAttribute('stroke-width',stroke);
+    const core=document.createElementNS(SVGNS,'circle');
+    core.setAttribute('cx',x);core.setAttribute('cy',y);core.setAttribute('r',radius*0.38);
+    core.setAttribute('fill','#bf360c');core.setAttribute('stroke','#fff');core.setAttribute('stroke-width',stroke*0.7);
+    spot.appendChild(ring);spot.appendChild(core);svg.appendChild(spot);
   }
-  const spot=document.createElementNS(SVGNS,'g');spot.setAttribute('class','spot');
-  const ring=document.createElementNS(SVGNS,'circle');
-  ring.setAttribute('cx',qCur.x);ring.setAttribute('cy',qCur.y);ring.setAttribute('r','34');
-  spot.appendChild(ring);svg.appendChild(spot);
+  if(quizKind==='sport'){addSpot(qCur.x,qCur.y);return}
+  const g=svg.querySelector('.place[data-id="'+qCur.id+'"]');
+  if(!g)return;
+  g.classList.add('hot');
+  const path=g.querySelector('path');
+  let b=null;try{b=path.getBBox()}catch(e){}
+  if(b&&Math.min(b.width,b.height)*scale<26) addSpot(b.x+b.width/2,b.y+b.height/2);
 }
 function fillChoices(){
   const box=$('choices');box.innerHTML='';
@@ -708,23 +844,23 @@ function applyQuizView(){
 function setQuizView(view){
   quizView=view;
   applyQuizView();
-  if($('endCard').classList.contains('on'))return;
-  const svg=$('quizSvg');
-  if(!busy&&svg._home){
-    const cur=readVB(svg);
-    if(Math.abs(cur.w-svg._home.w)>1)writeVB(svg,svg._home);
-  }
-  paintTarget();
   fillChoices();
+  if($('endCard').classList.contains('on')){
+    if(view==='flags')zoomSettle($('quizSvg'));
+    return;
+  }
+  if(view==='map')zoomToCurrent();
+  else{clearTarget();zoomSettle($('quizSvg'))}
 }
 function showQuestion(){
   $('endCard').classList.remove('on');
-  if(!quizDeck.length){qCur=null;paintTarget();fillChoices();return}
+  if(!quizDeck.length){qCur=null;clearTarget();fillChoices();return}
   qCur=quizItems[quizDeck[0]];
   const img=$('flag');img.classList.remove('pop');void img.offsetWidth;img.src=qCur.img;img.classList.add('pop');
   const n=$('name');n.classList.remove('show');n.textContent=qCur.name;n.style.fontSize='';
-  paintTarget();
   fillChoices();
+  if(quizView==='map')zoomToCurrent();
+  else clearTarget();
 }
 function showQuizEnd(party){
   qCur=null;
@@ -793,6 +929,7 @@ function countryName(id){
 let lastMapTap=0;
 function onCountryTap(e){
   if(busy)return;
+  if(performance.now()-mapGesture<450)return;
   const now=performance.now();
   if(now-lastMapTap<50)return;
   const id=countryAt(e.clientX,e.clientY);
@@ -826,9 +963,12 @@ function mark(correct){
   renderHome();updateQuizScore();
   const finished=!quizDeck.length;
   if(quizView==='map'){
-    lock(800);
+    lock(1500);
     clearTimeout(stepTimer);
-    stepTimer=setTimeout(()=>{if(finished)showQuizEnd(true);else showQuestion()},560);
+    stepTimer=setTimeout(()=>{
+      if(finished)zoomHomeThen(()=>showQuizEnd(true));
+      else showQuestion();
+    },520);
   }else{
     lock(2100);
     focusPlace($('quizSvg'), region, ()=>{if(finished)showQuizEnd(true);else showQuestion()});
@@ -908,6 +1048,40 @@ tap($('no'),()=>mark(false));
 tap($('ask'),()=>{if(!qCur)return;nameToken++;const n=$('name');n.textContent=qCur.name;n.classList.add('show');fitName();say(qCur.say||qCur.name)});
 $('quizSvg').addEventListener('pointerup',onCountryTap);
 $('quizSvg').addEventListener('click',onCountryTap);
+$('quizSvg').addEventListener('wheel',e=>{
+  if(quizView!=='map')return;
+  e.preventDefault();
+  noteGesture();
+  zoomBy(e.deltaY>0?1.18:0.84,e.clientX,e.clientY);
+},{passive:false});
+const mapPointers=new Map();
+let pinchDist=0;
+$('quizSvg').addEventListener('pointerdown',e=>{
+  mapPointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(mapPointers.size===2){
+    const p=[...mapPointers.values()];
+    pinchDist=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y)||1;
+  }
+});
+$('quizSvg').addEventListener('pointermove',e=>{
+  if(!mapPointers.has(e.pointerId)||quizView!=='map')return;
+  const prev=mapPointers.get(e.pointerId);
+  mapPointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(mapPointers.size>=2){
+    const p=[...mapPointers.values()];
+    const dist=Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y)||1;
+    if(pinchDist){noteGesture();zoomBy(pinchDist/dist,(p[0].x+p[1].x)/2,(p[0].y+p[1].y)/2)}
+    pinchDist=dist;
+    return;
+  }
+  const dx=e.clientX-prev.x, dy=e.clientY-prev.y;
+  if(dx*dx+dy*dy<36)return;
+  noteGesture();
+  panBy(dx,dy);
+});
+function dropPointer(e){mapPointers.delete(e.pointerId);if(mapPointers.size<2)pinchDist=0}
+$('quizSvg').addEventListener('pointerup',dropPointer);
+$('quizSvg').addEventListener('pointercancel',dropPointer);
 tap($('quizNew'),()=>{
   if(!confirm('Start this map over?\n\n(Grown-ups only!)'))return;
   replayQuiz();
@@ -1076,7 +1250,7 @@ function migrateProgress(){
   store.set('ver',ver);
 }
 migrateProgress();
-const BUILD='89b5ac7';
+const BUILD='6e652e6';
 if('serviceWorker' in navigator){
   let reloading=false;
   navigator.serviceWorker.addEventListener('controllerchange',()=>{
@@ -1091,7 +1265,14 @@ window.FlagGame={QUIZ,MAPS,flagProg,sportProg,flagItems,mapFilled,usProg,pickPla
   force(id){const i=quizItems.findIndex(t=>t.id===id);if(i<0)return false;quizDeck=[i,...quizDeck.filter(x=>x!==i)];showQuestion();return true},
   get undoCount(){return undoStack.length},get qCur(){return qCur},get mapCur(){return mapCur},
   get quizIds(){return quizDeck.map(i=>quizItems[i]&&quizItems[i].id)},
-  get mapIds(){return mapDeck.slice()}};
+  get mapIds(){return mapDeck.slice()},
+  framePlace(id){
+    const svg=$('quizSvg');
+    const g=svg.querySelector('.place[data-id="'+id+'"]');
+    if(!g||!svg._home)return null;
+    const b=g.querySelector('path').getBBox();
+    return frameBox(svg,svg._home,{x:b.x,y:b.y,w:Math.max(b.width,.8),h:Math.max(b.height,.8)},false);
+  }};
 </script>
 </body>
 </html>
