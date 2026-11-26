@@ -282,7 +282,7 @@ def check_map_zoom(page):
         }"""
     )
     print("nhl zoom", nyr["vb"], nyi["vb"], nj["vb"])
-    assert nyr["vb"][2] < nyr["homeW"] * 0.35
+    assert nyr["vb"][2] < nyr["homeW"] * 0.6
     assert nyi["id"] == "nyi" and nj["id"] == "nj" and nj["spot"]
     assert abs((nyi["vb"][0] + nyi["vb"][2] / 2) - (nyr["vb"][0] + nyr["vb"][2] / 2)) > 1
     # Wheel zoom still leaves a later question framed.
@@ -295,7 +295,7 @@ def check_map_zoom(page):
     bos = page.evaluate(
         """() => document.getElementById('quizSvg').getAttribute('viewBox').split(/\\s+/).map(Number)[2]"""
     )
-    assert bos < nyr["homeW"] * 0.4
+    assert bos < nyr["homeW"] * 0.65
     page.click("#qClose")
     page.click("#sportsClose")
 

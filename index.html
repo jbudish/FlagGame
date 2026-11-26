@@ -197,7 +197,7 @@ button:active{transform:scale(.94)}
     <button id="goFlags" class="homechoice flags"><span class="emoji">🌍</span><span class="title">Flags</span><span class="knew" id="flagsKnew">0/0</span><span class="sub">countries</span></button>
     <button id="goSports" class="homechoice sports"><span class="emoji">🏆</span><span class="title">Sports</span><span class="knew" id="sportsKnew">0/0</span><span class="sub">teams</span></button>
   </div>
-  <div id="buildTag">vbf8d06f</div>
+  <div id="buildTag">v59886da</div>
 </div>
 <div id="sportsPick" class="screen picker">
   <button id="sportsClose" class="xbtn" aria-label="Back">✕</button>
@@ -661,11 +661,11 @@ function frameBox(svg, home, box, city){
   const panelMin=Math.max(Math.min(rect.width||700, rect.height||380), 200);
   const rel=span/Math.min(home.w, home.h);
   let targetPx;
-  if(city) targetPx=Math.min(panelMin*0.16, 72);
-  else if(rel>0.38) targetPx=panelMin*0.7;
-  else if(rel>0.16) targetPx=panelMin*0.48;
-  else if(rel>0.06) targetPx=panelMin*0.32;
-  else targetPx=Math.min(panelMin*0.34, 170);
+  if(city) targetPx=Math.min(panelMin*0.08, 36);
+  else if(rel>0.38) targetPx=panelMin*0.5;
+  else if(rel>0.16) targetPx=panelMin*0.34;
+  else if(rel>0.06) targetPx=panelMin*0.2;
+  else targetPx=Math.min(panelMin*0.17, 85);
   let viewMin=span*panelMin/targetPx;
   viewMin=Math.max(viewMin, span*(city?6:2.5));
   if(city) viewMin=Math.max(viewMin, 78);
@@ -1250,7 +1250,7 @@ function migrateProgress(){
   store.set('ver',ver);
 }
 migrateProgress();
-const BUILD='bf8d06f';
+const BUILD='59886da';
 if('serviceWorker' in navigator){
   let reloading=false;
   navigator.serviceWorker.addEventListener('controllerchange',()=>{
