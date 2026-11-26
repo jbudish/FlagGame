@@ -1,5 +1,5 @@
 /* Flag Game service worker. Cache name is stamped at build time. */
-const CACHE = 'flaggame-2ce839b';
+const CACHE = 'flaggame-81b5ddb';
 
 self.addEventListener('install', event => {
   self.skipWaiting();
