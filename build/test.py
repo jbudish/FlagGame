@@ -186,9 +186,12 @@ def check_play_by_map(page):
     print("nhl map mode", nhl["n"], nhl["cur"])
     assert nhl["spot"] and nhl["n"] == 8 and nhl["id"] in nhl["ids"] and nhl["allInGame"]
     assert abs(float(nhl["x"]) - float(nhl["curx"])) < 1
+    nick = page.evaluate("(name) => FlagGame.nickName(name)", nhl["cur"])
+    assert page.locator('#choices .choice[data-id="%s"]' % nhl["id"]).inner_text() == nick
+    assert " " not in nick or nick in ("Blue Jackets", "Red Wings", "Maple Leafs", "Golden Knights")
     page.locator('#choices .choice[data-id="%s"]' % nhl["id"]).tap()
     page.wait_for_timeout(120)
-    assert page.locator("#mapLabel").inner_text() == nhl["cur"]
+    assert page.locator("#mapLabel").inner_text() == nick
     page.wait_for_function("() => !document.body.classList.contains('busy')")
     assert page.evaluate("() => FlagGame.sportProg('nhl').ok.length") == 1
     page.click("#qClose")
@@ -284,7 +287,13 @@ def check_map_zoom(page):
     print("nhl zoom", nyr["vb"], nyi["vb"], nj["vb"])
     assert nyr["vb"][2] < nyr["homeW"] * 0.6
     assert nyi["id"] == "nyi" and nj["id"] == "nj" and nj["spot"]
-    assert abs((nyi["vb"][0] + nyi["vb"][2] / 2) - (nyr["vb"][0] + nyr["vb"][2] / 2)) > 1
+    # East-coast cities sit against the map edge once the frame centers them in the open area.
+    assert nyi["vb"] != nyr["vb"]
+    page.evaluate("() => FlagGame.force('nyr')")
+    page.wait_for_timeout(900)
+    nyr_clear = target_clear(page, None)
+    print("nyr clear", nyr_clear)
+    assert nyr_clear["inside"] and not nyr_clear["choices"] and not nyr_clear["score"]
     # Wheel zoom still leaves a later question framed.
     box = page.locator("#quizSvg").bounding_box()
     page.mouse.move(box["x"] + 80, box["y"] + 80)
@@ -296,6 +305,105 @@ def check_map_zoom(page):
         """() => document.getElementById('quizSvg').getAttribute('viewBox').split(/\\s+/).map(Number)[2]"""
     )
     assert bos < nyr["homeW"] * 0.65
+    page.click("#qClose")
+    page.click("#sportsClose")
+
+
+ART = Path("/opt/cursor/artifacts")
+
+
+def target_clear(page, code):
+    return page.evaluate(
+        """(code) => {
+          const svg = document.getElementById('quizSvg');
+          const ctm = svg.getScreenCTM();
+          const pt = svg.createSVGPoint();
+          let box;
+          if (code) {
+            const path = svg.querySelector('[data-id="' + code + '"] path');
+            const b = path.getBBox();
+            const pts = [[b.x,b.y],[b.x+b.width,b.y],[b.x,b.y+b.height],[b.x+b.width,b.y+b.height],[b.x+b.width/2,b.y+b.height/2]];
+            const s = pts.map(([x,y]) => { pt.x = x; pt.y = y; const p = pt.matrixTransform(ctm); return {x:p.x,y:p.y}; });
+            box = {l:Math.min(...s.map(p=>p.x)), t:Math.min(...s.map(p=>p.y)), r:Math.max(...s.map(p=>p.x)), b:Math.max(...s.map(p=>p.y)), cx:s[4].x, cy:s[4].y};
+          } else {
+            const spot = svg.querySelector('.spot circle');
+            pt.x = +spot.getAttribute('cx'); pt.y = +spot.getAttribute('cy');
+            const p = pt.matrixTransform(ctm);
+            box = {l:p.x-16, t:p.y-16, r:p.x+16, b:p.y+16, cx:p.x, cy:p.y};
+          }
+          function hit(id){
+            const el = document.getElementById(id);
+            if (!el) return false;
+            const o = el.getBoundingClientRect();
+            if (o.width < 8 || o.height < 8 || getComputedStyle(el).display === 'none') return false;
+            return box.l < o.right - 1 && box.r > o.left + 1 && box.t < o.bottom - 1 && box.b > o.top + 1;
+          }
+          const svgBox = svg.getBoundingClientRect();
+          return {
+            choices: hit('choices'), score: hit('quizScore'), mode: hit('modeToggle'), neu: hit('quizNew'),
+            inside: box.cx > svgBox.left + 2 && box.cx < svgBox.right - 2 && box.cy > svgBox.top + 2 && box.cy < svgBox.bottom - 2,
+            cx: Math.round(box.cx), cy: Math.round(box.cy)
+          };
+        }""",
+        code,
+    )
+
+
+def check_visible_framing(page):
+    ART.mkdir(parents=True, exist_ok=True)
+    page.evaluate("() => localStorage.setItem('flaggame.flags', JSON.stringify({ok:[], bad:[]}))")
+    page.set_viewport_size({"width": 932, "height": 430})
+    page.wait_for_timeout(250)
+    page.click("#goFlags")
+    page.click('.cont[data-cont="europe"]')
+    page.wait_for_timeout(300)
+    assert page.evaluate("() => FlagGame.force('AUT')")
+    page.click("#modeMap")
+    page.wait_for_timeout(1000)
+    land = target_clear(page, "AUT")
+    print("austria landscape", land)
+    assert land["inside"] and not land["choices"] and not land["score"] and not land["mode"] and not land["neu"]
+    page.screenshot(path=str(ART / "austria-iphone-landscape.png"))
+    page.screenshot(path=str(SHOTS / "austria-iphone-landscape.png"))
+    page.set_viewport_size({"width": 430, "height": 932})
+    page.wait_for_timeout(700)
+    port = target_clear(page, "AUT")
+    print("austria portrait", port)
+    assert port["inside"] and not port["choices"] and not port["score"] and not port["mode"] and not port["neu"]
+    page.screenshot(path=str(ART / "austria-iphone-portrait.png"))
+    page.set_viewport_size({"width": 932, "height": 430})
+    page.wait_for_timeout(400)
+    page.click("#qClose")
+    page.click("#flagsClose")
+    page.evaluate("() => localStorage.setItem('flaggame.sport.nfl', JSON.stringify({ok:[], bad:[]}))")
+    page.click("#goSports")
+    page.click('.league[data-league="nfl"]')
+    page.wait_for_timeout(300)
+    assert page.evaluate("() => FlagGame.force('min')")
+    page.click("#modeMap")
+    page.wait_for_timeout(1000)
+    texts = page.evaluate("() => [...document.querySelectorAll('#choices .choice')].map(b => b.textContent)")
+    print("nfl choices", texts)
+    assert "Vikings" in texts
+    assert all(" " not in t for t in texts)
+    spot = target_clear(page, None)
+    print("vikings spot", spot)
+    assert spot["inside"] and not spot["choices"] and not spot["score"]
+    page.screenshot(path=str(ART / "nfl-vikings-map.png"))
+    page.screenshot(path=str(SHOTS / "nfl-vikings-map.png"))
+    dups = page.evaluate(
+        """() => {
+          const bad = [];
+          for (const [league, data] of Object.entries(FlagGame.QUIZ.leagues)) {
+            const nicks = data.teams.map(t => FlagGame.nickName(t.name));
+            if (new Set(nicks).size !== nicks.length) bad.push(league);
+            if (nicks.some(n => /\\b(FC|SC|CF)$/.test(n))) bad.push(league + ' suffix');
+          }
+          return bad;
+        }"""
+    )
+    print("nick dups", dups)
+    assert dups == []
     page.click("#qClose")
     page.click("#sportsClose")
 
@@ -765,9 +873,12 @@ def main():
         page.set_viewport_size({"width": 844, "height": 390})
         page.wait_for_timeout(150)
         assert page.locator("#rotate").is_visible() is False
+        page.click("#sportsClose")
+        page.wait_for_timeout(150)
         check_country_names(page)
         check_play_by_map(page)
         check_map_zoom(page)
+        check_visible_framing(page)
 
         print("external", reqs)
         print("errors", errors)

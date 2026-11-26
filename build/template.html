@@ -183,7 +183,17 @@ button:active{transform:scale(.94)}
 #game.mapmode #choices{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:6px;position:absolute;top:58px;right:8px;bottom:62px;width:min(54vw,360px);pointer-events:auto;overflow:hidden}
 #game.mapmode #quizBack,#game.mapmode #endCard{pointer-events:auto}
 #game.mapmode #quizNew{left:10px;right:auto;bottom:58px}
+#game.mapmode #modeToggle{left:62px}
+#game.mapmode #mapLabel{top:64px;bottom:auto;left:32%;max-width:min(46vw,280px)}
 #game.mapmode #endCard{position:fixed;inset:0}
+@media (max-aspect-ratio:1/1){
+  #game.mapmode #choices{top:auto;left:8px;right:8px;bottom:8px;width:auto;height:min(46vh,340px);grid-template-rows:repeat(4,minmax(0,1fr))}
+  #game.mapmode #quizNew{left:10px;right:auto;top:58px;bottom:auto}
+  #game.mapmode #quizBack{top:auto;left:10px;bottom:calc(min(46vh, 340px) + 12px)}
+  #game.mapmode #modeToggle{left:auto;right:10px;top:58px;bottom:auto}
+  #game.mapmode #mapLabel{left:50%;top:auto;bottom:calc(min(46vh,340px) + 14px);max-width:calc(100% - 20px)}
+}
+body:has(#game.mapmode) #rotate{display:none !important}
 #buildTag{position:absolute;right:8px;bottom:4px;z-index:4;font-size:11px;font-weight:800;letter-spacing:.2px;opacity:.72;pointer-events:none}
 @media (prefers-reduced-motion:reduce){
   #quizSvg .place.pulse,#quizSvg .place.hot path,#quizSvg .spot,#mapSvg .place.pulse,.burst,#bigstar.go,#rotate .phone{animation:none}
@@ -654,11 +664,45 @@ function focusPlace(svg,id,done){
   });
 }
 function zoomSettle(svg){zoomToken++;if(svg&&svg._home) writeVB(svg, svg._home);if(svg) hideMag(svg)}
+function shownBox(el){
+  if(!el)return null;
+  const s=getComputedStyle(el);
+  if(s.display==='none'||s.visibility==='hidden')return null;
+  const b=el.getBoundingClientRect();
+  if(b.width<8||b.height<8)return null;
+  return b;
+}
+function freeScreen(svgRect){
+  let L=svgRect.left+4, T=svgRect.top+4, R=svgRect.right-4, B=svgRect.bottom-4;
+  for(const id of ['choices','quizScore','modeToggle','quizNew','quizBack']){
+    const b=shownBox($(id));
+    if(!b)continue;
+    const oL=Math.max(L,b.left), oT=Math.max(T,b.top), oR=Math.min(R,b.right), oB=Math.min(B,b.bottom);
+    if(oR-oL<10||oB-oT<10)continue;
+    const cuts=[];
+    if(b.left>L+16) cuts.push([L,T,Math.min(R,b.left-6),B]);
+    if(b.right<R-16) cuts.push([Math.max(L,b.right+6),T,R,B]);
+    if(b.top>T+12) cuts.push([L,T,R,Math.min(B,b.top-6)]);
+    if(b.bottom<B-12) cuts.push([L,Math.max(T,b.bottom+6),R,B]);
+    let best=null, bestA=-1;
+    for(const c of cuts){
+      const a=Math.max(0,c[2]-c[0])*Math.max(0,c[3]-c[1]);
+      if(a>bestA){bestA=a;best=c}
+    }
+    const curA=Math.max(0,R-L)*Math.max(0,B-T);
+    if(best&&bestA>curA*0.22){L=best[0];T=best[1];R=best[2];B=best[3]}
+  }
+  if(R-L<48||B-T<48) return {L:svgRect.left+8,T:svgRect.top+8,R:svgRect.right-8,B:svgRect.bottom-8};
+  return {L,T,R,B};
+}
 function frameBox(svg, home, box, city){
   const rect=svg.getBoundingClientRect();
-  const aspect=(rect.width&&rect.height)?rect.width/rect.height:(home.w/home.h);
+  const rw=rect.width||700, rh=rect.height||380;
+  const aspect=(rw&&rh)?rw/rh:(home.w/home.h);
+  const free=(rect.width>40&&rect.height>40)?freeScreen(rect):{L:rect.left||0,T:rect.top||0,R:(rect.left||0)+rw,B:(rect.top||0)+rh};
+  const visW=Math.max(40, free.R-free.L), visH=Math.max(40, free.B-free.T);
   const span=Math.max(box.w, box.h, city?8:1);
-  const panelMin=Math.max(Math.min(rect.width||700, rect.height||380), 200);
+  const panelMin=Math.max(Math.min(rw, rh), 200);
   const rel=span/Math.min(home.w, home.h);
   let targetPx;
   if(city) targetPx=Math.min(panelMin*0.08, 36);
@@ -669,22 +713,56 @@ function frameBox(svg, home, box, city){
   let viewMin=span*panelMin/targetPx;
   viewMin=Math.max(viewMin, span*(city?6:2.5));
   if(city) viewMin=Math.max(viewMin, 78);
+  const fit=0.82;
+  viewMin=Math.max(viewMin, box.w*rw/(visW*fit), box.h*rh/(visH*fit));
   viewMin=Math.min(viewMin, Math.min(home.w, home.h));
   let w,h;
   if(aspect>=1){h=viewMin;w=h*aspect}else{w=viewMin;h=w/aspect}
   if(w>home.w){w=home.w;h=w/aspect}
   if(h>home.h){h=home.h;w=Math.min(home.w,h*aspect);h=w/aspect}
   const cx=box.x+box.w/2, cy=box.y+box.h/2;
-  let x=cx-w/2, y=cy-h/2;
-  const boxEl=$('choices');
-  const panel=boxEl&&getComputedStyle(boxEl).display!=='none'?boxEl.getBoundingClientRect():null;
-  if(rect.width&&panel&&panel.width>40&&panel.left>rect.left+40){
-    const visible=(Math.min(rect.right, panel.left)-rect.left)/rect.width;
-    x+=w*(0.5-visible/2);
+  const fx=(free.L+visW/2-(rect.left||0))/rw;
+  const fy=(free.T+visH/2-(rect.top||0))/rh;
+  function sized(scale){
+    let ww=w*scale, hh=h*scale;
+    if(ww>home.w){ww=home.w;hh=ww/aspect}
+    if(hh>home.h){hh=home.h;ww=Math.min(home.w,hh*aspect);hh=ww/aspect}
+    let x=cx-fx*ww, y=cy-fy*hh;
+    x=Math.max(home.x, Math.min(x, home.x+home.w-ww));
+    y=Math.max(home.y, Math.min(y, home.y+home.h-hh));
+    return {x,y,w:ww,h:hh};
   }
-  x=Math.max(home.x, Math.min(x, home.x+home.w-w));
-  y=Math.max(home.y, Math.min(y, home.y+home.h-h));
-  return {x,y,w,h};
+  function screenBox(frame){
+    const left=(rect.left||0)+(box.x-frame.x)/frame.w*rw;
+    const top=(rect.top||0)+(box.y-frame.y)/frame.h*rh;
+    return {l:left,t:top,r:left+box.w/frame.w*rw,b:top+box.h/frame.h*rh};
+  }
+  function inside(frame, pad){
+    const s=screenBox(frame);
+    return s.l>=free.L+pad && s.r<=free.R-pad && s.t>=free.T+pad && s.b<=free.B-pad;
+  }
+  let frame=sized(1);
+  if(rect.width>40&&!inside(frame, 4)){
+    let lo=0.12, hi=1, best=null;
+    for(let i=0;i<16;i++){
+      const mid=(lo+hi)/2;
+      const trial=sized(mid);
+      if(inside(trial, 4)){best=trial;lo=mid}else hi=mid;
+    }
+    if(!best){
+      lo=0.12; hi=1; best=sized(0.12);
+      for(let i=0;i<16;i++){
+        const mid=(lo+hi)/2;
+        const trial=sized(mid);
+        const s=screenBox(trial);
+        const cxp=(s.l+s.r)/2, cyp=(s.t+s.b)/2;
+        const ok=cxp>=free.L+18 && cxp<=free.R-18 && cyp>=free.T+18 && cyp<=free.B-18;
+        if(ok){best=trial;lo=mid}else hi=mid;
+      }
+    }
+    frame=best;
+  }
+  return frame;
 }
 function targetBox(svg){
   if(!qCur)return null;
@@ -814,6 +892,28 @@ function paintTarget(){
   let b=null;try{b=path.getBBox()}catch(e){}
   if(b&&Math.min(b.width,b.height)*scale<26) addSpot(b.x+b.width/2,b.y+b.height/2);
 }
+const TWO_NICKS=['Blue Jackets','Red Wings','Maple Leafs','Golden Knights','Trail Blazers','Red Sox','White Sox','Blue Jays'];
+const MLS_NICK={
+  'Atlanta United FC':'Atlanta United','Austin FC':'Austin','CF Montréal':'Montréal','Charlotte FC':'Charlotte',
+  'Chicago Fire FC':'Fire','Colorado Rapids':'Rapids','Columbus Crew':'Crew','D.C. United':'D.C. United',
+  'FC Cincinnati':'Cincinnati','FC Dallas':'Dallas','Houston Dynamo FC':'Dynamo','Inter Miami CF':'Inter Miami',
+  'LA Galaxy':'Galaxy','Los Angeles FC':'LAFC','Minnesota United FC':'Minnesota United','Nashville SC':'Nashville',
+  'New England Revolution':'Revolution','New York City FC':'NYCFC','Orlando City SC':'Orlando City',
+  'Philadelphia Union':'Union','Portland Timbers':'Timbers','Real Salt Lake':'Real Salt Lake',
+  'Red Bull New York':'Red Bulls','San Diego FC':'San Diego','San Jose Earthquakes':'Earthquakes',
+  'Seattle Sounders FC':'Sounders','Sporting Kansas City':'Sporting','St. Louis CITY SC':'CITY',
+  'Toronto FC':'Toronto','Vancouver Whitecaps FC':'Whitecaps'
+};
+function nickName(name){
+  if(MLS_NICK[name]) return MLS_NICK[name];
+  for(const nick of TWO_NICKS) if(name.endsWith(' '+nick)||name===nick) return nick;
+  const bits=name.split(' ');
+  return bits[bits.length-1];
+}
+function choiceLabel(item){
+  if(!item) return '';
+  return quizKind==='sport'?nickName(item.name):item.name;
+}
 function fillChoices(){
   const box=$('choices');
   box.replaceChildren();
@@ -822,7 +922,7 @@ function fillChoices(){
   const options=shuffle(others.slice(0,7).concat([qCur]));
   for(const opt of options){
     const b=document.createElement('button');
-    b.type='button';b.className='choice';b.dataset.id=opt.id;b.textContent=opt.name;
+    b.type='button';b.className='choice';b.dataset.id=opt.id;b.textContent=choiceLabel(opt);
     tap(b,()=>choose(opt.id));
     box.appendChild(b);
   }
@@ -948,7 +1048,7 @@ function onCountryTap(e){
 function mark(correct){
   if(busy||!qCur)return;
   const id=qCur.id;
-  if(quizView==='map'){mapNameToken++;flashMapName(qCur.name)}
+  if(quizView==='map'){mapNameToken++;flashMapName(choiceLabel(qCur))}
   else if(quizKind==='flag'){nameToken++;flashAnswerName(qCur.name)}
   const region=quizKind==='sport'?qCur.region:id;
   const before=quizKind==='sport'?sportProg(quizId):flagProg();
@@ -1223,6 +1323,14 @@ tap($('mapBackFind'),undoMap);
 tap($('mapYes'),()=>{if(mapMode==='name')mapCorrect()});
 tap($('mapNo'),()=>{if(mapMode==='name'&&!busy)mapMiss()});
 tap($('mapAskBtn'),()=>{if(mapMode!=='name'||!mapCur)return;const n=$('mapName');n.textContent=mapCur.name;n.classList.add('show');fitMapText(n);say(mapCur.name)});
+let reframeTimer=0;
+function reframeMap(){
+  if(quizView!=='map'||!qCur)return;
+  if($('endCard').classList.contains('on'))return;
+  zoomToCurrent();
+}
+window.addEventListener('resize',()=>{clearTimeout(reframeTimer);reframeTimer=setTimeout(reframeMap,80)});
+window.addEventListener('orientationchange',()=>{clearTimeout(reframeTimer);reframeTimer=setTimeout(reframeMap,160)});
 document.addEventListener('gesturestart',e=>e.preventDefault());
 document.addEventListener('dblclick',e=>e.preventDefault());
 function migrateProgress(){
@@ -1261,7 +1369,7 @@ if('serviceWorker' in navigator){
   navigator.serviceWorker.register('./sw.js?v='+BUILD).catch(()=>{});
 }
 renderHome();
-window.FlagGame={QUIZ,MAPS,flagProg,sportProg,flagItems,mapFilled,usProg,pickPlace,scoreText,
+window.FlagGame={QUIZ,MAPS,flagProg,sportProg,flagItems,mapFilled,usProg,pickPlace,scoreText,nickName,choiceLabel,
   force(id){const i=quizItems.findIndex(t=>t.id===id);if(i<0)return false;quizDeck=[i,...quizDeck.filter(x=>x!==i)];showQuestion();return true},
   get undoCount(){return undoStack.length},get qCur(){return qCur},get mapCur(){return mapCur},
   get quizIds(){return quizDeck.map(i=>quizItems[i]&&quizItems[i].id)},
