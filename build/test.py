@@ -103,6 +103,88 @@ def check_country_names(page):
     page.click("#flagsClose")
 
 
+def check_play_by_map(page):
+    page.evaluate("() => localStorage.setItem('flaggame.flags', JSON.stringify({ok:[], bad:[]}))")
+    page.evaluate("() => localStorage.setItem('flaggame.sport.nhl', JSON.stringify({ok:[], bad:[]}))")
+    page.click("#goFlags")
+    page.click('.cont[data-cont="asia"]')
+    page.wait_for_timeout(300)
+    assert page.locator("#modeMap").is_visible()
+    assert page.locator("#flag").is_visible()
+    page.click("#modeMap")
+    page.wait_for_timeout(200)
+    info = page.evaluate(
+        """() => {
+          const game = document.getElementById('game').getBoundingClientRect();
+          const map = document.getElementById('quizMap').getBoundingClientRect();
+          const choices = [...document.querySelectorAll('#choices .choice')].map(b => b.dataset.id);
+          const hot = document.querySelector('#quizSvg .place.hot');
+          return {
+            mapWide: map.width > game.width * 0.9,
+            choices: choices.length,
+            hot: hot && hot.dataset.id,
+            cur: FlagGame.qCur && FlagGame.qCur.id,
+            flagsHidden: getComputedStyle(document.getElementById('flagArea')).display
+          };
+        }"""
+    )
+    print("asia map mode", info)
+    assert info["mapWide"] and info["choices"] == 4 and info["hot"] == info["cur"]
+    assert info["flagsHidden"] == "none"
+    page.locator('#choices .choice[data-id="%s"]' % info["cur"]).click()
+    page.wait_for_timeout(150)
+    assert page.locator("#mapLabel").is_visible()
+    name = page.locator("#mapLabel").inner_text()
+    assert name
+    page.wait_for_function("() => !document.body.classList.contains('busy')")
+    colored = page.evaluate(
+        """(id) => document.querySelector('#quizSvg [data-id="' + id + '"]').className.baseVal""",
+        info["cur"],
+    )
+    print("asia after answer", name, colored, page.locator("#quizScore").inner_text())
+    assert "ok" in colored
+    assert "/" in page.locator("#quizScore").inner_text() and "%" in page.locator("#quizScore").inner_text()
+    page.wait_for_timeout(200)
+    assert page.locator("#mapLabel").is_hidden()
+    nxt = page.evaluate("() => FlagGame.qCur.id")
+    wrong = page.evaluate(
+        """(cur) => [...document.querySelectorAll('#choices .choice')].map(b => b.dataset.id).find(id => id !== cur)""",
+        nxt,
+    )
+    page.locator('#choices .choice[data-id="%s"]' % wrong).click()
+    page.wait_for_function("() => !document.body.classList.contains('busy')")
+    assert nxt in page.evaluate("() => FlagGame.flagProg().bad")
+    page.click("#modeFlags")
+    page.wait_for_timeout(150)
+    assert page.locator("#flag").is_visible()
+    assert page.locator("#yes").is_visible()
+    page.click("#qClose")
+    page.click("#flagsClose")
+    page.click("#goSports")
+    page.click('.league[data-league="nhl"]')
+    page.wait_for_timeout(300)
+    page.click("#modeMap")
+    page.wait_for_timeout(200)
+    nhl = page.evaluate(
+        """() => {
+          const spot = document.querySelector('#quizSvg .spot circle');
+          const cur = FlagGame.qCur;
+          const names = [...document.querySelectorAll('#choices .choice')].map(b => b.textContent);
+          return {spot: !!spot, x: spot && spot.getAttribute('cx'), curx: String(cur.x), names, cur: cur.name, n: names.length};
+        }"""
+    )
+    print("nhl map mode", nhl)
+    assert nhl["spot"] and nhl["n"] == 4 and nhl["cur"] in nhl["names"]
+    assert abs(float(nhl["x"]) - float(nhl["curx"])) < 1
+    page.locator('#choices .choice[data-id="%s"]' % page.evaluate("() => FlagGame.qCur.id")).click()
+    page.wait_for_timeout(120)
+    assert page.locator("#mapLabel").inner_text() == nhl["cur"]
+    page.wait_for_function("() => !document.body.classList.contains('busy')")
+    assert page.evaluate("() => FlagGame.sportProg('nhl').ok.length") == 1
+    page.click("#qClose")
+    page.click("#sportsClose")
+
+
 def webkit_europe(play):
     browser = play.webkit.launch()
     iphone = dict(play.devices["iPhone 13"])
@@ -569,6 +651,7 @@ def main():
         page.wait_for_timeout(150)
         assert page.locator("#rotate").is_visible() is False
         check_country_names(page)
+        check_play_by_map(page)
 
         print("external", reqs)
         print("errors", errors)

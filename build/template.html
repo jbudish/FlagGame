@@ -82,7 +82,7 @@ button:active{transform:scale(.94)}
 #yes{background:#43a047;box-shadow:inset 0 -6px 0 #2e7d32}
 #ask{background:#ffb300;color:#fff;font-size:min(10vh,8vw);box-shadow:inset 0 -6px 0 #ff8f00}
 #no{background:#e53935;box-shadow:inset 0 -6px 0 #b71c1c}
-.busy #side button:not(.goback),.busy #mapSide button:not(.goback),.busy #quizSvg{pointer-events:none}
+.busy #side button:not(.goback),.busy #choices button,.busy #mapSide button:not(.goback),.busy #quizSvg{pointer-events:none}
 .goback{position:absolute;left:10px;bottom:10px;z-index:12;width:44px;height:44px;padding:0;border-radius:22px;background:rgba(20,24,28,.62);color:#fff;border:2px solid rgba(255,255,255,.7);font-size:18px;font-weight:800;line-height:1;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:none}
 .goback span{font-size:9px;font-weight:800;letter-spacing:.2px;margin-top:1px}
 .goback.off,.goback:disabled{background:rgba(60,60,60,.28);color:rgba(255,255,255,.45);border-color:rgba(255,255,255,.28)}
@@ -98,6 +98,9 @@ button:active{transform:scale(.94)}
 #quizSvg .logo{pointer-events:none}
 #quizSvg .place.bg path{fill:#d5dde3;stroke:#b0bec5}
 #quizSvg .place.bg .dot{display:none}
+#quizSvg .place.hot path{fill:#fff8e1;stroke:#ff6f00;stroke-width:4;animation:mapPulse .9s ease-in-out infinite}
+#quizSvg .spot{pointer-events:none}
+#quizSvg .spot circle{fill:rgba(255,179,0,.72);stroke:#e65100;stroke-width:6;animation:mapPulse .9s ease-in-out infinite}
 .leader{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:6;overflow:visible}
 .leader[hidden]{display:none}
 .leader line{stroke:#fff;stroke-width:3;stroke-linecap:round}
@@ -166,6 +169,21 @@ button:active{transform:scale(.94)}
 #rotate p{font-size:30px;font-weight:bold;line-height:1.3}
 #rotate small{font-size:18px;opacity:.85}
 @media (orientation:portrait){#rotate{display:flex}}
+#modeToggle{position:absolute;left:10px;bottom:10px;z-index:6;display:flex;background:rgba(255,255,255,.96);border-radius:999px;overflow:hidden;border:2px solid #1565c0}
+#modeToggle button{padding:7px 12px;font-size:clamp(12px,2.8vh,16px);font-weight:800;color:#1565c0;background:transparent;border-radius:0}
+#modeToggle button.on{background:#1565c0;color:#fff}
+#choices{display:none}
+.choice{border-radius:18px;font-weight:800;font-size:clamp(13px,3.2vh,20px);line-height:1.05;background:#fff;color:#0d47a1;border:3px solid #1565c0;box-shadow:inset 0 -6px 0 #90caf9;padding:6px 8px}
+.choice.good{background:#43a047;color:#fff;border-color:#2e7d32;box-shadow:inset 0 -6px 0 #2e7d32}
+.choice.bad{background:#e53935;color:#fff;border-color:#b71c1c;box-shadow:inset 0 -6px 0 #b71c1c}
+#game.mapmode #quizMap{position:absolute;inset:0;width:auto;z-index:1}
+#game.mapmode #quizPlay{position:absolute;top:0;right:0;bottom:0;width:min(36vh,30vw);min-width:148px;background:transparent;z-index:7;pointer-events:none}
+#game.mapmode #flagArea,#game.mapmode #side{display:none}
+#game.mapmode #choices{display:flex;flex-direction:column;gap:8px;height:100%;padding:8px;pointer-events:auto}
+#game.mapmode #quizBack,#game.mapmode #endCard{pointer-events:auto}
+#game.mapmode #choices{padding-bottom:64px}
+#game.mapmode #quizNew{left:10px;right:auto;bottom:58px}
+#game.mapmode #endCard{position:fixed;inset:0}
 #buildTag{position:absolute;right:8px;bottom:4px;z-index:4;font-size:11px;font-weight:800;letter-spacing:.2px;opacity:.72;pointer-events:none}
 @media (prefers-reduced-motion:reduce){
   #quizSvg .place.pulse,#mapSvg .place.pulse,.burst,#bigstar.go,#rotate .phone{animation:none}
@@ -204,6 +222,10 @@ button:active{transform:scale(.94)}
     <svg id="quizLeader" class="leader" hidden><line/></svg>
     <div id="quizMag" class="mag"></div>
     <button id="quizNew">New map</button>
+    <div id="modeToggle">
+      <button type="button" id="modeFlags" class="on">Flags</button>
+      <button type="button" id="modeMap">Play by map</button>
+    </div>
   </div>
   <div id="quizPlay">
     <div id="flagArea">
@@ -215,6 +237,7 @@ button:active{transform:scale(.94)}
       <button id="ask" aria-label="Say the name">?</button>
       <button id="no" aria-label="Didn't know it"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/></svg></button>
     </div>
+    <div id="choices"></div>
     <div id="endCard">
       <div class="endParty">🎉</div>
       <div id="endScore" class="endScore">0/0</div>
@@ -435,7 +458,7 @@ function pulse(id){
   if(!g)return;
   g.classList.remove('pulse');void g.getBoundingClientRect();g.classList.add('pulse');
 }
-let quizKind=null,quizId=null,quizItems=[],quizDeck=[],qCur=null,quizReturn='home',undoStack=[],stepTimer=null;
+let quizKind=null,quizId=null,quizItems=[],quizDeck=[],qCur=null,quizReturn='home',undoStack=[],stepTimer=null,quizView='flags';
 function paintUndo(){
   const on=undoStack.length>0;
   for(const id of ['quizBack','mapBack','mapBackFind']){
@@ -619,12 +642,89 @@ function focusPlace(svg,id,done){
   });
 }
 function zoomSettle(svg){zoomToken++;if(svg&&svg._home) writeVB(svg, svg._home);if(svg) hideMag(svg)}
+function clearTarget(){
+  const svg=$('quizSvg');
+  svg.querySelectorAll('.place.hot').forEach(g=>{
+    g.classList.remove('hot');
+    const dot=g.querySelector('.dot');
+    if(dot&&dot.dataset.r) dot.setAttribute('r',dot.dataset.r);
+  });
+  const spot=svg.querySelector('g.spot');if(spot)spot.remove();
+}
+function paintTarget(){
+  clearTarget();
+  if(quizView!=='map'||!qCur)return;
+  const svg=$('quizSvg');
+  if(quizKind!=='sport'){
+    const g=svg.querySelector('.place[data-id="'+qCur.id+'"]');
+    if(!g)return;
+    g.classList.add('hot');
+    const dot=g.querySelector('.dot');
+    const path=g.querySelector('path');
+    let b=null;try{b=path.getBBox()}catch(e){}
+    const ctm=svg.getScreenCTM();
+    const scale=ctm?Math.abs(ctm.a):1;
+    if(b&&Math.min(b.width,b.height)*scale<36){
+      const spot=document.createElementNS(SVGNS,'g');spot.setAttribute('class','spot');
+      const ring=document.createElementNS(SVGNS,'circle');
+      ring.setAttribute('cx',b.x+b.width/2);ring.setAttribute('cy',b.y+b.height/2);
+      ring.setAttribute('r',String(Math.max(18,22/Math.max(scale,0.0001))));
+      spot.appendChild(ring);svg.appendChild(spot);
+    }else if(dot){if(!dot.dataset.r)dot.dataset.r=dot.getAttribute('r')||'7';dot.setAttribute('r','14');dot.setAttribute('fill','#ff6f00')}
+    return;
+  }
+  const spot=document.createElementNS(SVGNS,'g');spot.setAttribute('class','spot');
+  const ring=document.createElementNS(SVGNS,'circle');
+  ring.setAttribute('cx',qCur.x);ring.setAttribute('cy',qCur.y);ring.setAttribute('r','34');
+  spot.appendChild(ring);svg.appendChild(spot);
+}
+function fillChoices(){
+  const box=$('choices');box.innerHTML='';
+  if(quizView!=='map'||!qCur)return;
+  const pool=shuffle(quizItems.filter(t=>t.id!==qCur.id));
+  const options=shuffle(pool.slice(0,3).concat([qCur]));
+  for(const opt of options){
+    const b=document.createElement('button');
+    b.className='choice';b.type='button';b.dataset.id=opt.id;b.textContent=opt.name;
+    tap(b,()=>choose(opt.id));
+    box.appendChild(b);
+  }
+}
+function choose(id){
+  if(busy||!qCur||quizView!=='map')return;
+  const right=id===qCur.id;
+  for(const b of $('choices').querySelectorAll('.choice')){
+    if(b.dataset.id===qCur.id)b.classList.add('good');
+    else if(b.dataset.id===id)b.classList.add('bad');
+  }
+  mark(right);
+}
+function applyQuizView(){
+  const map=quizView==='map';
+  $('game').classList.toggle('mapmode',map);
+  $('modeFlags').classList.toggle('on',!map);
+  $('modeMap').classList.toggle('on',map);
+}
+function setQuizView(view){
+  quizView=view;
+  applyQuizView();
+  if($('endCard').classList.contains('on'))return;
+  const svg=$('quizSvg');
+  if(!busy&&svg._home){
+    const cur=readVB(svg);
+    if(Math.abs(cur.w-svg._home.w)>1)writeVB(svg,svg._home);
+  }
+  paintTarget();
+  fillChoices();
+}
 function showQuestion(){
   $('endCard').classList.remove('on');
-  if(!quizDeck.length){qCur=null;return}
+  if(!quizDeck.length){qCur=null;paintTarget();fillChoices();return}
   qCur=quizItems[quizDeck[0]];
   const img=$('flag');img.classList.remove('pop');void img.offsetWidth;img.src=qCur.img;img.classList.add('pop');
   const n=$('name');n.classList.remove('show');n.textContent=qCur.name;n.style.fontSize='';
+  paintTarget();
+  fillChoices();
 }
 function showQuizEnd(party){
   qCur=null;
@@ -692,12 +792,17 @@ function countryName(id){
 }
 let lastMapTap=0;
 function onCountryTap(e){
-  if(quizKind!=='flag'||busy)return;
+  if(busy)return;
   const now=performance.now();
   if(now-lastMapTap<50)return;
   const id=countryAt(e.clientX,e.clientY);
   if(!id)return;
-  const name=countryName(id);
+  let name='';
+  if(quizKind==='flag')name=countryName(id);
+  else if(quizKind==='sport'){
+    const prog=sportProg(quizId);
+    name=QUIZ.leagues[quizId].teams.filter(t=>t.region===id&&(prog.ok.includes(t.id)||prog.bad.includes(t.id))).map(t=>t.name).join(', ');
+  }
   if(!name)return;
   lastMapTap=now;
   mapNameToken++;
@@ -706,7 +811,8 @@ function onCountryTap(e){
 function mark(correct){
   if(busy||!qCur)return;
   const id=qCur.id;
-  if(quizKind==='flag'){nameToken++;flashAnswerName(qCur.name)}
+  if(quizView==='map'){mapNameToken++;flashMapName(qCur.name)}
+  else if(quizKind==='flag'){nameToken++;flashAnswerName(qCur.name)}
   const region=quizKind==='sport'?qCur.region:id;
   const before=quizKind==='sport'?sportProg(quizId):flagProg();
   pushUndo({kind:'quiz',scope:quizKind+':'+quizId,id,prev:statusOf(before,id),deck:quizDeck.slice()});
@@ -714,12 +820,19 @@ function mark(correct){
   applyStatus(p,id,correct?'ok':(statusOf(before,id)==='ok'?'ok':'bad'));
   if(quizKind==='sport')saveSport(quizId,p);else saveFlags(p);
   quizDeck.shift();
+  clearTarget();
   paintQuiz();
   if(correct){chime();burst()}
   renderHome();updateQuizScore();
   const finished=!quizDeck.length;
-  lock(2100);
-  focusPlace($('quizSvg'), region, ()=>{if(finished)showQuizEnd(true);else showQuestion()});
+  if(quizView==='map'){
+    lock(800);
+    clearTimeout(stepTimer);
+    stepTimer=setTimeout(()=>{if(finished)showQuizEnd(true);else showQuestion()},560);
+  }else{
+    lock(2100);
+    focusPlace($('quizSvg'), region, ()=>{if(finished)showQuizEnd(true);else showQuestion()});
+  }
 }
 function undoQuiz(){
   if(!undoStack.length)return;
@@ -732,15 +845,16 @@ function undoQuiz(){
   if(quizKind==='sport')saveSport(quizId,p);else saveFlags(p);
   quizDeck=step.deck.slice();
   paintQuiz();showQuestion();paintUndo();renderHome();updateQuizScore();
-  if(qCur) focusPlace($('quizSvg'), quizKind==='sport'?qCur.region:qCur.id);
+  if(qCur&&quizView!=='map') focusPlace($('quizSvg'), quizKind==='sport'?qCur.region:qCur.id);
 }
 function startQuiz(kind,id){
   quizKind=kind;quizId=id;quizReturn=kind==='sport'?'sportsPick':'flagsPick';
+  quizView='flags';applyQuizView();
   $('game').classList.toggle('sport',kind==='sport');
   $('game').classList.toggle('flags',kind!=='sport');
   zoomSettle($('quizSvg'));
   if(kind==='sport'){
-    quizItems=QUIZ.leagues[id].teams.map(t=>({id:t.id,name:t.name,say:t.say,img:t.img,region:t.region}));
+    quizItems=QUIZ.leagues[id].teams.map(t=>({id:t.id,name:t.name,say:t.say,img:t.img,region:t.region,x:t.x,y:t.y}));
     const svg=$('quizSvg');svg.setAttribute('viewBox',QUIZ.sportsMap.vb);
     drawPlaces(svg,QUIZ.sportsMap.places);paintQuiz();
   }else{
@@ -787,6 +901,8 @@ tap($('flagsClose'),()=>{hush();renderHome();show('home')});
 tap($('qClose'),leaveQuiz);
 tap($('endHome'),leaveQuiz);
 tap($('endAgain'),replayQuiz);
+tap($('modeFlags'),()=>setQuizView('flags'));
+tap($('modeMap'),()=>setQuizView('map'));
 tap($('yes'),()=>mark(true));
 tap($('no'),()=>mark(false));
 tap($('ask'),()=>{if(!qCur)return;nameToken++;const n=$('name');n.textContent=qCur.name;n.classList.add('show');fitName();say(qCur.say||qCur.name)});
