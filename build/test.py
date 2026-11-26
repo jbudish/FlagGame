@@ -117,21 +117,29 @@ def check_play_by_map(page):
         """() => {
           const game = document.getElementById('game').getBoundingClientRect();
           const map = document.getElementById('quizMap').getBoundingClientRect();
-          const choices = [...document.querySelectorAll('#choices .choice')].map(b => b.dataset.id);
           const hot = document.querySelector('#quizSvg .place.hot');
           return {
             mapWide: map.width > game.width * 0.9,
-            choices: choices.length,
             hot: hot && hot.dataset.id,
             cur: FlagGame.qCur && FlagGame.qCur.id,
-            flagsHidden: getComputedStyle(document.getElementById('flagArea')).display
+            name: FlagGame.qCur && FlagGame.qCur.name,
+            flagsHidden: getComputedStyle(document.getElementById('flagArea')).display,
+            focused: document.activeElement && document.activeElement.id
           };
         }"""
     )
     print("asia map mode", info)
-    assert info["mapWide"] and info["choices"] == 4 and info["hot"] == info["cur"]
+    assert info["mapWide"] and info["hot"] == info["cur"]
     assert info["flagsHidden"] == "none"
-    page.locator('#choices .choice[data-id="%s"]' % info["cur"]).click()
+    assert info["focused"] == "answerInput"
+    page.locator("#answerInput").fill("K")
+    k_names = page.locator(".suggest").all_inner_texts()
+    print("K suggests", k_names)
+    assert "Kazakhstan" in k_names and "South Korea" in k_names
+    assert k_names.index("Kazakhstan") < k_names.index("South Korea")
+    page.locator("#answerInput").fill("")
+    page.locator("#answerInput").fill(info["name"][:1])
+    page.locator('.suggest[data-id="%s"]' % info["cur"]).click()
     page.wait_for_timeout(150)
     assert page.locator("#mapLabel").is_visible()
     name = page.locator("#mapLabel").inner_text()
@@ -146,14 +154,19 @@ def check_play_by_map(page):
     assert "/" in page.locator("#quizScore").inner_text() and "%" in page.locator("#quizScore").inner_text()
     page.wait_for_timeout(200)
     assert page.locator("#mapLabel").is_hidden()
-    nxt = page.evaluate("() => FlagGame.qCur.id")
+    nxt = page.evaluate("() => ({id: FlagGame.qCur.id, name: FlagGame.qCur.name})")
+    page.locator("#answerInput").fill("A")
     wrong = page.evaluate(
-        """(cur) => [...document.querySelectorAll('#choices .choice')].map(b => b.dataset.id).find(id => id !== cur)""",
-        nxt,
+        """(cur) => [...document.querySelectorAll('.suggest')].map(b => b.dataset.id).find(id => id !== cur)""",
+        nxt["id"],
     )
-    page.locator('#choices .choice[data-id="%s"]' % wrong).click()
+    assert wrong
+    page.locator('.suggest[data-id="%s"]' % wrong).click()
+    page.wait_for_timeout(80)
+    assert page.locator("#answerInput").input_value() == nxt["name"]
+    assert "bad" in (page.locator("#answerInput").get_attribute("class") or "")
     page.wait_for_function("() => !document.body.classList.contains('busy')")
-    assert nxt in page.evaluate("() => FlagGame.flagProg().bad")
+    assert nxt["id"] in page.evaluate("() => FlagGame.flagProg().bad")
     page.click("#modeFlags")
     page.wait_for_timeout(150)
     assert page.locator("#flag").is_visible()
@@ -165,18 +178,24 @@ def check_play_by_map(page):
     page.wait_for_timeout(300)
     page.click("#modeMap")
     page.wait_for_timeout(200)
+    page.locator("#answerInput").fill("York")
+    york = page.locator(".suggest").all_inner_texts()
+    print("York suggests", york)
+    assert any("Rangers" in n for n in york) and any("Islanders" in n for n in york)
+    assert all("Boston" not in n for n in york)
     nhl = page.evaluate(
         """() => {
           const spot = document.querySelector('#quizSvg .spot circle');
           const cur = FlagGame.qCur;
-          const names = [...document.querySelectorAll('#choices .choice')].map(b => b.textContent);
-          return {spot: !!spot, x: spot && spot.getAttribute('cx'), curx: String(cur.x), names, cur: cur.name, n: names.length};
+          return {spot: !!spot, x: spot && spot.getAttribute('cx'), curx: String(cur.x), id: cur.id, cur: cur.name};
         }"""
     )
     print("nhl map mode", nhl)
-    assert nhl["spot"] and nhl["n"] == 4 and nhl["cur"] in nhl["names"]
+    assert nhl["spot"]
     assert abs(float(nhl["x"]) - float(nhl["curx"])) < 1
-    page.locator('#choices .choice[data-id="%s"]' % page.evaluate("() => FlagGame.qCur.id")).click()
+    page.locator("#answerInput").fill("")
+    page.locator("#answerInput").fill(nhl["cur"])
+    page.keyboard.press("Enter")
     page.wait_for_timeout(120)
     assert page.locator("#mapLabel").inner_text() == nhl["cur"]
     page.wait_for_function("() => !document.body.classList.contains('busy')")

@@ -82,7 +82,7 @@ button:active{transform:scale(.94)}
 #yes{background:#43a047;box-shadow:inset 0 -6px 0 #2e7d32}
 #ask{background:#ffb300;color:#fff;font-size:min(10vh,8vw);box-shadow:inset 0 -6px 0 #ff8f00}
 #no{background:#e53935;box-shadow:inset 0 -6px 0 #b71c1c}
-.busy #side button:not(.goback),.busy #choices button,.busy #mapSide button:not(.goback),.busy #quizSvg{pointer-events:none}
+.busy #side button:not(.goback),.busy #suggest button,.busy #mapSide button:not(.goback),.busy #quizSvg{pointer-events:none}
 .goback{position:absolute;left:10px;bottom:10px;z-index:12;width:44px;height:44px;padding:0;border-radius:22px;background:rgba(20,24,28,.62);color:#fff;border:2px solid rgba(255,255,255,.7);font-size:18px;font-weight:800;line-height:1;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:none}
 .goback span{font-size:9px;font-weight:800;letter-spacing:.2px;margin-top:1px}
 .goback.off,.goback:disabled{background:rgba(60,60,60,.28);color:rgba(255,255,255,.45);border-color:rgba(255,255,255,.28)}
@@ -173,18 +173,20 @@ button:active{transform:scale(.94)}
 #modeToggle{position:absolute;left:10px;bottom:10px;z-index:6;display:flex;background:rgba(255,255,255,.96);border-radius:999px;overflow:hidden;border:2px solid #1565c0}
 #modeToggle button{padding:7px 12px;font-size:clamp(12px,2.8vh,16px);font-weight:800;color:#1565c0;background:transparent;border-radius:0}
 #modeToggle button.on{background:#1565c0;color:#fff}
-#choices{display:none}
-.choice{border-radius:18px;font-weight:800;font-size:clamp(13px,3.2vh,20px);line-height:1.05;background:#fff;color:#0d47a1;border:3px solid #1565c0;box-shadow:inset 0 -6px 0 #90caf9;padding:6px 8px}
-.choice.good{background:#43a047;color:#fff;border-color:#2e7d32;box-shadow:inset 0 -6px 0 #2e7d32}
-.choice.bad{background:#e53935;color:#fff;border-color:#b71c1c;box-shadow:inset 0 -6px 0 #b71c1c}
+#answerBox{display:none}
+#answerInput{width:100%;font:inherit;font-weight:800;font-size:16px;border-radius:16px;border:3px solid #1565c0;padding:10px 12px;color:#0d47a1;background:#fff;box-shadow:inset 0 -4px 0 #90caf9}
+#answerInput.good{background:#43a047;color:#fff;border-color:#2e7d32;box-shadow:inset 0 -4px 0 #2e7d32}
+#answerInput.bad{background:#e53935;color:#fff;border-color:#b71c1c;box-shadow:inset 0 -4px 0 #b71c1c}
+#suggest{display:flex;flex-direction:column;gap:6px;overflow:auto;min-height:0}
+.suggest{text-align:left;border-radius:14px;font-weight:800;font-size:16px;min-height:46px;padding:8px 12px;background:#fff;color:#0d47a1;border:3px solid #1565c0;box-shadow:inset 0 -4px 0 #90caf9}
 #game.mapmode #quizMap{position:absolute;inset:0;width:auto;z-index:1}
-#game.mapmode #quizPlay{position:absolute;top:0;right:0;bottom:0;width:min(36vh,30vw);min-width:148px;background:transparent;z-index:7;pointer-events:none}
+#game.mapmode #quizPlay{position:absolute;inset:0;width:auto;background:transparent;z-index:7;pointer-events:none}
 #game.mapmode #flagArea,#game.mapmode #side{display:none}
-#game.mapmode #choices{display:flex;flex-direction:column;gap:8px;height:100%;padding:8px;pointer-events:auto}
+#game.mapmode #answerBox{display:flex;flex-direction:column;gap:6px;position:absolute;top:58px;right:8px;width:min(46vw,300px);max-height:calc(100% - 120px);pointer-events:auto}
 #game.mapmode #quizBack,#game.mapmode #endCard{pointer-events:auto}
-#game.mapmode #choices{padding-bottom:64px}
 #game.mapmode #quizNew{left:10px;right:auto;bottom:58px}
 #game.mapmode #endCard{position:fixed;inset:0}
+body.kb #game.mapmode #answerBox{position:fixed;left:8px;right:8px;top:auto;bottom:var(--kb);width:auto;max-height:42vh;flex-direction:column-reverse}
 #buildTag{position:absolute;right:8px;bottom:4px;z-index:4;font-size:11px;font-weight:800;letter-spacing:.2px;opacity:.72;pointer-events:none}
 @media (prefers-reduced-motion:reduce){
   #quizSvg .place.pulse,#quizSvg .place.hot path,#quizSvg .spot,#mapSvg .place.pulse,.burst,#bigstar.go,#rotate .phone{animation:none}
@@ -238,7 +240,10 @@ button:active{transform:scale(.94)}
       <button id="ask" aria-label="Say the name">?</button>
       <button id="no" aria-label="Didn't know it"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/></svg></button>
     </div>
-    <div id="choices"></div>
+    <div id="answerBox">
+      <input id="answerInput" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" placeholder="Type a name" aria-label="Type a name">
+      <div id="suggest"></div>
+    </div>
     <div id="endCard">
       <div class="endParty">🎉</div>
       <div id="endScore" class="endScore">0/0</div>
@@ -677,10 +682,16 @@ function frameBox(svg, home, box, city){
   if(h>home.h){h=home.h;w=Math.min(home.w,h*aspect);h=w/aspect}
   const cx=box.x+box.w/2, cy=box.y+box.h/2;
   let x=cx-w/2, y=cy-h/2;
-  const play=$('quizPlay').getBoundingClientRect();
-  if(rect.width&&play.width&&play.left>rect.left+40){
-    const visible=(Math.min(rect.right, play.left)-rect.left)/rect.width;
+  const boxEl=$('answerBox');
+  const panel=boxEl&&getComputedStyle(boxEl).display!=='none'?boxEl.getBoundingClientRect():null;
+  if(rect.width&&panel&&panel.width>40&&panel.left>rect.left+40&&!document.body.classList.contains('kb')){
+    const visible=(Math.min(rect.right, panel.left)-rect.left)/rect.width;
     x+=w*(0.5-visible/2);
+  }
+  const kb=document.body.classList.contains('kb')?(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--kb'))||0):0;
+  if(kb>40&&rect.height){
+    const visible=Math.max(rect.height-kb-8,80)/rect.height;
+    y+=h*(0.5-visible/2);
   }
   x=Math.max(home.x, Math.min(x, home.x+home.w-w));
   y=Math.max(home.y, Math.min(y, home.y+home.h-h));
@@ -814,26 +825,71 @@ function paintTarget(){
   let b=null;try{b=path.getBBox()}catch(e){}
   if(b&&Math.min(b.width,b.height)*scale<26) addSpot(b.x+b.width/2,b.y+b.height/2);
 }
-function fillChoices(){
-  const box=$('choices');box.innerHTML='';
-  if(quizView!=='map'||!qCur)return;
-  const pool=shuffle(quizItems.filter(t=>t.id!==qCur.id));
-  const options=shuffle(pool.slice(0,3).concat([qCur]));
-  for(const opt of options){
+function fold(s){return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()}
+function matchRank(query, item){
+  const q=fold(query).trim();
+  if(!q)return 0;
+  const names=[item.name];
+  let best=0;
+  for(const name of names){
+    const n=fold(name);
+    if(n.startsWith(q)) best=Math.max(best,3);
+    else if(n.split(/[^a-z0-9]+/).some(w=>w&&w.startsWith(q))) best=Math.max(best,2);
+  }
+  return best;
+}
+function refreshSuggest(){
+  const box=$('suggest');
+  box.replaceChildren();
+  const input=$('answerInput');
+  if(quizView!=='map'||!qCur||input.classList.contains('good')||input.classList.contains('bad'))return;
+  const q=input.value;
+  if(fold(q).trim().length<1)return;
+  const ranked=quizItems.map(t=>({t,r:matchRank(q,t)})).filter(x=>x.r>0);
+  ranked.sort((a,b)=>b.r-a.r||a.t.name.localeCompare(b.t.name));
+  for(const {t} of ranked){
     const b=document.createElement('button');
-    b.className='choice';b.type='button';b.dataset.id=opt.id;b.textContent=opt.name;
-    tap(b,()=>choose(opt.id));
+    b.type='button';b.className='suggest';b.dataset.id=t.id;b.textContent=t.name;
+    b.addEventListener('pointerdown',e=>e.preventDefault());
+    tap(b,()=>submitAnswer(t.id));
     box.appendChild(b);
   }
 }
-function choose(id){
+function focusAnswer(){
+  if(quizView!=='map'||!qCur)return;
+  const input=$('answerInput');
+  try{input.focus({preventScroll:true})}catch(e){try{input.focus()}catch(err){}}
+}
+function prepareAnswer(){
+  const input=$('answerInput');
+  input.value='';
+  input.classList.remove('good','bad');
+  $('suggest').replaceChildren();
+  if(quizView==='map'&&qCur) setTimeout(focusAnswer,40);
+  else input.blur();
+}
+function submitAnswer(id){
   if(busy||!qCur||quizView!=='map')return;
   const right=id===qCur.id;
-  for(const b of $('choices').querySelectorAll('.choice')){
-    if(b.dataset.id===qCur.id)b.classList.add('good');
-    else if(b.dataset.id===id)b.classList.add('bad');
-  }
+  const input=$('answerInput');
+  input.value=qCur.name;
+  input.classList.remove('good','bad');
+  input.classList.add(right?'good':'bad');
+  $('suggest').replaceChildren();
   mark(right);
+  focusAnswer();
+}
+function placeKeyboard(kb){
+  const gap=Math.max(0,kb||0);
+  document.documentElement.style.setProperty('--kb',gap+'px');
+  const open=gap>50&&quizView==='map';
+  const was=document.body.classList.contains('kb');
+  document.body.classList.toggle('kb',open);
+  if(open!==was&&quizView==='map'&&qCur&&!busy){
+    const svg=$('quizSvg');
+    const frame=questionFrame(svg);
+    if(frame) writeVB(svg,frame);
+  }
 }
 function applyQuizView(){
   const map=quizView==='map';
@@ -844,7 +900,7 @@ function applyQuizView(){
 function setQuizView(view){
   quizView=view;
   applyQuizView();
-  fillChoices();
+  prepareAnswer();
   if($('endCard').classList.contains('on')){
     if(view==='flags')zoomSettle($('quizSvg'));
     return;
@@ -854,11 +910,11 @@ function setQuizView(view){
 }
 function showQuestion(){
   $('endCard').classList.remove('on');
-  if(!quizDeck.length){qCur=null;clearTarget();fillChoices();return}
+  if(!quizDeck.length){qCur=null;clearTarget();prepareAnswer();return}
   qCur=quizItems[quizDeck[0]];
   const img=$('flag');img.classList.remove('pop');void img.offsetWidth;img.src=qCur.img;img.classList.add('pop');
   const n=$('name');n.classList.remove('show');n.textContent=qCur.name;n.style.fontSize='';
-  fillChoices();
+  prepareAnswer();
   if(quizView==='map')zoomToCurrent();
   else clearTarget();
 }
@@ -1043,6 +1099,21 @@ tap($('endHome'),leaveQuiz);
 tap($('endAgain'),replayQuiz);
 tap($('modeFlags'),()=>setQuizView('flags'));
 tap($('modeMap'),()=>setQuizView('map'));
+$('answerInput').addEventListener('input',refreshSuggest);
+$('answerInput').addEventListener('keydown',e=>{
+  if(e.key!=='Enter')return;
+  e.preventDefault();
+  const first=$('suggest').querySelector('.suggest');
+  if(first) submitAnswer(first.dataset.id);
+});
+if(window.visualViewport){
+  const track=()=>{
+    const vv=window.visualViewport;
+    placeKeyboard(Math.max(0, window.innerHeight-vv.height-vv.offsetTop));
+  };
+  visualViewport.addEventListener('resize',track);
+  visualViewport.addEventListener('scroll',track);
+}
 tap($('yes'),()=>mark(true));
 tap($('no'),()=>mark(false));
 tap($('ask'),()=>{if(!qCur)return;nameToken++;const n=$('name');n.textContent=qCur.name;n.classList.add('show');fitName();say(qCur.say||qCur.name)});
@@ -1266,6 +1337,7 @@ window.FlagGame={QUIZ,MAPS,flagProg,sportProg,flagItems,mapFilled,usProg,pickPla
   get undoCount(){return undoStack.length},get qCur(){return qCur},get mapCur(){return mapCur},
   get quizIds(){return quizDeck.map(i=>quizItems[i]&&quizItems[i].id)},
   get mapIds(){return mapDeck.slice()},
+  placeKeyboard,
   framePlace(id){
     const svg=$('quizSvg');
     const g=svg.querySelector('.place[data-id="'+id+'"]');
